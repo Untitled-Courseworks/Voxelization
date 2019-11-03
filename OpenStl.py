@@ -67,4 +67,4 @@ def read_stl(path: str):
     return res
 
 
-#test = read_stl("cube1.stl")
+#voxels = read_stl("cube1.stl")

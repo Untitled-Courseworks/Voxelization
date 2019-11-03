@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a39a1f40-9dbd-4de2-9625-fabb4e2568c3" name="Default Changelist" comment="" />
+    <list default="true" id="a39a1f40-9dbd-4de2-9625-fabb4e2568c3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeshToVoxel.py" beforeDir="false" afterPath="$PROJECT_DIR$/MeshToVoxel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OpenStl.py" beforeDir="false" afterPath="$PROJECT_DIR$/OpenStl.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +25,7 @@
   </component>
   <component name="ProjectId" id="1Sy82hsVtLaNCKfmmGjOSGIXAa9" />
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
@@ -99,7 +105,8 @@
       <updated>1572524269819</updated>
       <workItem from="1572524289795" duration="744000" />
       <workItem from="1572533558183" duration="569000" />
-      <workItem from="1572545803565" duration="2349000" />
+      <workItem from="1572545803565" duration="4679000" />
+      <workItem from="1572620735304" duration="5193000" />
     </task>
     <servers />
   </component>
@@ -119,9 +126,20 @@
       </map>
     </option>
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/MeshToVoxel.py</url>
+          <line>120</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Coursework$OpenStl.coverage" NAME="OpenStl Coverage Results" MODIFIED="1572524417976" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Voxelization$MeshToVoxel.coverage" NAME="MeshToVoxel Coverage Results" MODIFIED="1572546825179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Voxelization$MeshToVoxel.coverage" NAME="MeshToVoxel Coverage Results" MODIFIED="1572623852892" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Voxelization$OpenStl.coverage" NAME="OpenStl Coverage Results" MODIFIED="1572537960414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

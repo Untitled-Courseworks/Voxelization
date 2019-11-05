@@ -67,5 +67,9 @@ def read_stl(path: str):
     return res
 
 
+<<<<<<< HEAD
 #test = read_stl("cube1.stl")
 #qwe
+=======
+#voxels = read_stl("cube1.stl")
+>>>>>>> ChangeMesh

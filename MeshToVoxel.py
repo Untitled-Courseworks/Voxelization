@@ -2,6 +2,7 @@ import math
 
 
 class Mesh:
+    # Временно
     def __init__(self, normal: [], v1: [], v2: [], v3: []):
         self.Normal = normal
         self.V1 = v1
@@ -10,6 +11,7 @@ class Mesh:
 
 
 def return_sample_pyramid():
+    # Временно
     """
     Пример простой пирамиды с треугольным основанием
     :return: Список меши пирамиды с треугольным основанием
@@ -19,33 +21,36 @@ def return_sample_pyramid():
             Mesh([0, 9, 9], [0, 0, 3], [3, 0, 3], [0, 3, 0]),
             Mesh([-9, 0, 9], [0, 0, 0], [3, 0, 3], [0, 3, 0])]
 
+
 def return_sample_cube():
+    # Временно
     """
     Пример куба с длиной граней 3
     :return: Список мешей куба
     """
     return [
-            Mesh([], [0, 3, 3], [3, 3, 3], [3, 0, 3]),
-            Mesh([], [0, 3, 3], [0, 0, 3], [3, 0, 3]),
+        Mesh([], [0, 3, 3], [3, 3, 3], [3, 0, 3]),
+        Mesh([], [0, 3, 3], [0, 0, 3], [3, 0, 3]),
 
-            Mesh([], [0, 3, 3], [0, 0, 3], [0, 0, 0]),
-            Mesh([], [0, 3, 3], [0, 3, 0], [0, 0, 0]),
+        Mesh([], [0, 3, 3], [0, 0, 3], [0, 0, 0]),
+        Mesh([], [0, 3, 3], [0, 3, 0], [0, 0, 0]),
 
-            Mesh([], [0, 3, 3], [3, 3, 3], [0, 3, 0]),
-            Mesh([], [0, 3, 3], [3, 3, 0], [0, 3, 0]),
+        Mesh([], [0, 3, 3], [3, 3, 3], [0, 3, 0]),
+        Mesh([], [0, 3, 3], [3, 3, 0], [0, 3, 0]),
 
-            Mesh([], [3, 0, 3], [0, 0, 3], [3, 3, 3]),
-            Mesh([], [3, 0, 3], [3, 0, 0], [3, 3, 3]),
+        Mesh([], [3, 0, 3], [0, 0, 3], [3, 3, 3]),
+        Mesh([], [3, 0, 3], [3, 0, 0], [3, 3, 3]),
 
-            Mesh([], [3, 3, 3], [3, 0, 3], [3, 0, 0]),
-            Mesh([], [3, 3, 3], [3, 3, 0], [3, 0, 0]),
+        Mesh([], [3, 3, 3], [3, 0, 3], [3, 0, 0]),
+        Mesh([], [3, 3, 3], [3, 3, 0], [3, 0, 0]),
 
-            Mesh([], [0, 3, 0], [3, 3, 0], [3, 0, 0]),
-            Mesh([], [0, 3, 0], [0, 0, 0], [3, 0, 0]),
-            ]
+        Mesh([], [0, 3, 0], [3, 3, 0], [3, 0, 0]),
+        Mesh([], [0, 3, 0], [0, 0, 0], [3, 0, 0]),
+    ]
 
 
 def find_size_model(model: []):
+    # Временно
     """
     Рассчитывает размеры модели по крайним точкам
     :param model: Меши модели
@@ -64,99 +69,104 @@ def find_size_model(model: []):
 
 
 def compare(min: [], max: [], vertex: [], i: int):
+    # Временно
     if min[i] > vertex[i]:
         min[i] = vertex[i]
     if max[i] < vertex[i]:
         max[i] = vertex[i]
 
 
-class voxel:
-    def __init__(self, x: int, y: int, z: int, size: int, is_printed: bool):
-        self.X = x
-        self.Y = y
-        self.Z = z
-        self.Size = size
-        self.Is_Printed = is_printed
-
-
-def get_voxel_model(model: [], size_mod: []):
-    """
-    Крайне неэффективная реализация проверки на закрашивание вокселя
-    :param model: Список мешей
-    :param size_mod: Размеры модели
-    :return: Список вокселей с параметром bool обозначающем его закрашивание. Координаты одноу вершины вокселя
-    соостветствуют координатам его вызова в обратном порядке: voxels[z][y][x]
-    """
+def get_voxel_model(model, size_mod):
     res = []
-    z = 0
-    while z < math.ceil(size_mod[2] / size):
-        y = 0
-        temp_y = []
-        while y < math.ceil(size_mod[1] / size):
-            x = 0
-            temp_x = []
-            while x < math.ceil(size_mod[0] / size):
-                for v in model:
-                    if check_intersection([x, y, z], size, [v.V1, v.V2, v.V3]):
-                        #Использовал для отладки, можно посмотреть как находятся координаты
-                        #temp_x.append([True, x, y, z])
-
-                        temp_x.append(True)
-                        break
-                if len(temp_x) - 1 < x:
-                    # Использовал для отладки, можно посмотреть как находятся координаты
-                    #temp_x.append([False, x, y, z])
-
-                    temp_x.append(False)
-                x += 1
-            temp_y.append(temp_x)
-            y += 1
-        res.append(temp_y)
-        z += 1
+    for z in range(math.ceil(size_mod[2] / size)):
+        for y in range(math.ceil(size_mod[1] / size)):
+            for x in range(math.ceil(size_mod[0] / size)):
+                if is_voxel([x, y, z], model, size):
+                    res.append([x, y, z])
     return res
 
 
-def check_intersection(voxel_coordinates: [], size_voxel: float, triangle: []):
-    """
-    Проверка на включение проекции меша на плоскость в проекцию вокселя на плоскость
-    :param voxel_coordinates: Координаты верхней левой вершины квадрата
-    :param size_voxel: размер граней квадрата
-    :param triangle: координаты вершин меша
-    :return: Параметр bool, означающий закрашивание вокселя
-    """
-    for vert in triangle:
-        res = True
-        if not (voxel_coordinates[0] <= vert[0] <= voxel_coordinates[0] + size_voxel
-                and voxel_coordinates[1] <= vert[1] <= voxel_coordinates[1] + size_voxel):
-            res = False
-        if not (voxel_coordinates[0] <= vert[0] <= voxel_coordinates[0] + size_voxel
-                and voxel_coordinates[2] <= vert[2] <= voxel_coordinates[2] + size_voxel):
-            res = False
-        if not (voxel_coordinates[1] <= vert[1] <= voxel_coordinates[1] + size_voxel
-                and voxel_coordinates[2] <= vert[2] <= voxel_coordinates[2] + size_voxel):
-            res = False
-        if res:
-            return res
+def is_voxel(voxel: [], model: [], size_voxel: float):
+    for mesh in model:
+        if check_all_projection(voxel, size_voxel, mesh.V1, mesh.V2):
+            return True
+        elif check_all_projection(voxel, size_voxel, mesh.V1, mesh.V3):
+            return True
+        elif check_all_projection(voxel, size_voxel, mesh.V2, mesh.V3):
+            return True
     return False
 
 
+def check_all_projection(voxel: [], size_voxel: float, ver_1: [], ver_2: []):
+    # TODO
+    #  Нет проверки, когда меш полностью внутри проекции
+    return check_crossing_projection([voxel[0], voxel[1]], size_voxel, ver_1, ver_2) and \
+           check_crossing_projection([voxel[1], voxel[2]], size_voxel, ver_1, ver_2) and \
+           check_crossing_projection([voxel[0], voxel[2]], size_voxel, ver_1, ver_2)
+
+
+def check_crossing_projection(voxel_projection: [], size_voxel: float, ver_1: [], ver_2: []):
+    """
+    Проверяет пересечение проекции вокселя с линией проекции меша
+    :param voxel_projection: координаты верхней левой вершины проекции вокселя
+    :param size_voxel: размер вокселя
+    :param ver_1: первая вершина
+    :param ver_2: вторая вершина
+    :return:
+    """
+    if check_crossing_lines(ver_1, ver_2, voxel_projection, [voxel_projection[0], voxel_projection[1] + size_voxel]):
+        return True
+    elif check_crossing_lines(ver_1, ver_2, voxel_projection, [voxel_projection[0] + size_voxel, voxel_projection[1]]):
+        return True
+    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0], voxel_projection[1] + size_voxel],\
+            [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
+        return True
+
+    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0] + size_voxel, voxel_projection[1]],\
+            [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
+        return True
+    return False
+
+
+def check_crossing_lines(ver_1: [], ver_2: [], voxel_1: [], voxel_2: []):
+    """
+    Проверяет, пересекаются ли две линии и находится ли точка пересечения между вершинами вокселя
+    :param ver_1: Первая вершина меша
+    :param ver_2: вторая вершина меша
+    :param voxel_1: первая вершина вокселя
+    :param voxel_2: вторая вершина вокселя
+    :return:
+    """
+    devider = det([ver_1[0] - ver_2[0], ver_1[1] - ver_2[1]], [voxel_1[0] - voxel_2[0], voxel_1[1] - voxel_2[1]])
+    if devider == 0:
+        a1 = ver_1[1] - ver_2[1]
+        b1 = ver_2[0] - ver_1[0]
+        c1 = ver_1[0] * ver_2[1] - ver_2[0] * ver_1[1]
+        a2 = voxel_1[1] - voxel_2[1]
+        b2 = voxel_2[0] - voxel_1[0]
+        c2 = voxel_1[0] * voxel_2[1] - voxel_2[0] * voxel_1[1]
+        if det([a1, b1], [a2, b2]) == 0 and det([a1, c1], [a2, c2]) == 0 and det([b1, c1], [b2, c2]) == 0:
+            return voxel_1[0] <= ver_1[0] <= voxel_2[0] and voxel_1[1] <= ver_1[1] <= voxel_2[1] or \
+                   voxel_1[0] <= ver_2[0] <= voxel_2[0] and voxel_1[1] <= ver_2[1] <= voxel_2[1]
+
+        if det([a1, b1], [a2, b2]) == 0:
+            return False
+
+    x = (det(ver_1, ver_2) * (voxel_1[0] - voxel_2[0]) - (ver_1[0] - ver_2[0]) * det(voxel_1, voxel_2)) / devider
+    y = (det(ver_1, ver_2) * (voxel_1[1] - voxel_2[1]) - (ver_1[1] - ver_2[1]) * det(voxel_1, voxel_2)) / devider
+
+    return voxel_1[0] <= x <= voxel_2[0] and voxel_1[1] <= y <= voxel_2[1]
+
+
+def det(ver_1: [], ver_2: []):
+    return ver_1[0] * ver_2[1] - ver_2[0] * ver_1[1]
+
+
+# Временно
 size = 1
-count_mesh = 4
 model = return_sample_cube()
 size_mod = find_size_model(model)
 voxels = get_voxel_model(model, size_mod)
-print(voxels)
+print(len(voxels))
 
-
-
-def test_output(voxels: []):
-    test = voxels[len(voxels) - 1]
-    for y in test:
-        for x in y:
-            if x:
-                print("#", end="")
-            else:
-                print(" ", end="")
-        print()
-
-test_output(voxels)
+#print(check_crossing_lines([2, 0], [4, 0], [1, 0], [3, 0]))

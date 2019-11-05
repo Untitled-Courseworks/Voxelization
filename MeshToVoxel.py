@@ -9,7 +9,7 @@ class Mesh:
         self.V3 = v3
 
 
-def return_sample():
+def return_sample_pyramid():
     """
     Пример простой пирамиды с треугольным основанием
     :return: Список меши пирамиды с треугольным основанием
@@ -18,6 +18,31 @@ def return_sample():
             Mesh([9, 0, 0], [0, 0, 3], [0, 0, 0], [0, 3, 0]),
             Mesh([0, 9, 9], [0, 0, 3], [3, 0, 3], [0, 3, 0]),
             Mesh([-9, 0, 9], [0, 0, 0], [3, 0, 3], [0, 3, 0])]
+
+def return_sample_cube():
+    """
+    Пример куба с длиной граней 3
+    :return: Список мешей куба
+    """
+    return [
+            Mesh([], [0, 3, 3], [3, 3, 3], [3, 0, 3]),
+            Mesh([], [0, 3, 3], [0, 0, 3], [3, 0, 3]),
+
+            Mesh([], [0, 3, 3], [0, 0, 3], [0, 0, 0]),
+            Mesh([], [0, 3, 3], [0, 3, 0], [0, 0, 0]),
+
+            Mesh([], [0, 3, 3], [3, 3, 3], [0, 3, 0]),
+            Mesh([], [0, 3, 3], [3, 3, 0], [0, 3, 0]),
+
+            Mesh([], [3, 0, 3], [0, 0, 3], [3, 3, 3]),
+            Mesh([], [3, 0, 3], [3, 0, 0], [3, 3, 3]),
+
+            Mesh([], [3, 3, 3], [3, 0, 3], [3, 0, 0]),
+            Mesh([], [3, 3, 3], [3, 3, 0], [3, 0, 0]),
+
+            Mesh([], [0, 3, 0], [3, 3, 0], [3, 0, 0]),
+            Mesh([], [0, 3, 0], [0, 0, 0], [3, 0, 0]),
+            ]
 
 
 def find_size_model(model: []):
@@ -75,11 +100,13 @@ def get_voxel_model(model: [], size_mod: []):
                     if check_intersection([x, y, z], size, [v.V1, v.V2, v.V3]):
                         #Использовал для отладки, можно посмотреть как находятся координаты
                         #temp_x.append([True, x, y, z])
+
                         temp_x.append(True)
                         break
                 if len(temp_x) - 1 < x:
                     # Использовал для отладки, можно посмотреть как находятся координаты
                     #temp_x.append([False, x, y, z])
+
                     temp_x.append(False)
                 x += 1
             temp_y.append(temp_x)
@@ -92,29 +119,34 @@ def get_voxel_model(model: [], size_mod: []):
 def check_intersection(voxel_coordinates: [], size_voxel: float, triangle: []):
     """
     Проверка на включение проекции меша на плоскость в проекцию вокселя на плоскость
-    :param voxel_coordinates: Координаты верхней левой вершины вокселя
+    :param voxel_coordinates: Координаты верхней левой вершины квадрата
     :param size_voxel: размер граней квадрата
     :param triangle: координаты вершин меша
     :return: Параметр bool, означающий закрашивание вокселя
     """
     for vert in triangle:
-        if voxel_coordinates[0] <= vert[0] <= voxel_coordinates[0] + size_voxel \
-                and voxel_coordinates[1] <= vert[1] <= voxel_coordinates[1] + size_voxel \
-                and voxel_coordinates[2] <= vert[2] <= voxel_coordinates[2] + size_voxel:
-            return True
+        res = True
+        if not (voxel_coordinates[0] <= vert[0] <= voxel_coordinates[0] + size_voxel
+                and voxel_coordinates[1] <= vert[1] <= voxel_coordinates[1] + size_voxel):
+            res = False
+        if not (voxel_coordinates[0] <= vert[0] <= voxel_coordinates[0] + size_voxel
+                and voxel_coordinates[2] <= vert[2] <= voxel_coordinates[2] + size_voxel):
+            res = False
+        if not (voxel_coordinates[1] <= vert[1] <= voxel_coordinates[1] + size_voxel
+                and voxel_coordinates[2] <= vert[2] <= voxel_coordinates[2] + size_voxel):
+            res = False
+        if res:
+            return res
     return False
 
 
-size = 0.5
+size = 1
 count_mesh = 4
-model = return_sample()
+model = return_sample_cube()
 size_mod = find_size_model(model)
 voxels = get_voxel_model(model, size_mod)
 print(voxels)
-print(voxels[0][0][0])
-print(voxels[0][0][1])
-print(voxels[3][2][1])
-print(voxels[1][2][3])
+
 
 
 def test_output(voxels: []):

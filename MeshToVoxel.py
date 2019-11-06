@@ -87,6 +87,10 @@ def get_voxel_model(model, size_mod):
 
 
 def is_voxel(voxel: [], model: [], size_voxel: float):
+    # TODO
+    #  Нет проверки, когда меш полностью внутри проекции
+    #  Нет проверки, когда воксель внутри меша
+
     for mesh in model:
         if check_all_projection(voxel, size_voxel, mesh.V1, mesh.V2):
             return True
@@ -97,9 +101,30 @@ def is_voxel(voxel: [], model: [], size_voxel: float):
     return False
 
 
+def check_voxel_in_mesh(mesh: Mesh, voxel_projection: [], size_voxel: float):
+    pass
+
+
+def point_in_triangle(point: [], triangle: Mesh):
+    # TODO
+    a = (triangle.V1[] - PTest.X) * (P2.Y - P1.Y) - (P2.X - P1.X) * (P1.Y - PTest.Y)
+    b = (P2.X - PTest.X) * (P3.Y - P2.Y) - (P3.X - P2.X) * (P2.Y - PTest.Y)
+    c = (P3.X - PTest.X) * (P1.Y - P3.Y) - (P1.X - P3.X) * (P3.Y - PTest.Y)
+
+
+def check_mesh_in_voxel(mesh: Mesh, voxel_projection: [], size_voxel: float):
+    return point_in_square(voxel_projection, size_voxel, mesh.V1) or \
+           point_in_square(voxel_projection, size_voxel, mesh.V2) or \
+           point_in_square(voxel_projection, size_voxel, mesh.V3)
+
+
+def point_in_square(square: [], size_square: float, point: []):
+    return square[0] <= point[0] <= square[0] + size_square and square[1] <= point[1] <= square[1] + size_square
+
+
 def check_all_projection(voxel: [], size_voxel: float, ver_1: [], ver_2: []):
     # TODO
-    #  Нет проверки, когда меш полностью внутри проекции
+    #  Как меши проецируются на разные плоскости то?
     return check_crossing_projection([voxel[0], voxel[1]], size_voxel, ver_1, ver_2) and \
            check_crossing_projection([voxel[1], voxel[2]], size_voxel, ver_1, ver_2) and \
            check_crossing_projection([voxel[0], voxel[2]], size_voxel, ver_1, ver_2)
@@ -118,12 +143,10 @@ def check_crossing_projection(voxel_projection: [], size_voxel: float, ver_1: []
         return True
     elif check_crossing_lines(ver_1, ver_2, voxel_projection, [voxel_projection[0] + size_voxel, voxel_projection[1]]):
         return True
-    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0], voxel_projection[1] + size_voxel],\
-            [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
+    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0], voxel_projection[1] + size_voxel], [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
         return True
 
-    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0] + size_voxel, voxel_projection[1]],\
-            [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
+    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0] + size_voxel, voxel_projection[1]],  [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
         return True
     return False
 
@@ -169,4 +192,4 @@ size_mod = find_size_model(model)
 voxels = get_voxel_model(model, size_mod)
 print(len(voxels))
 
-#print(check_crossing_lines([2, 0], [4, 0], [1, 0], [3, 0]))
+# print(check_crossing_lines([2, 0], [4, 0], [1, 0], [3, 0]))

@@ -1,2 +1,123 @@
-def crossing(mesh, voxel: []):
+def crossing(mesh: [], voxel: []):
+    # TODO
+    #   Написать проекцию меша и вокселя на каждую плоскость
+    #   Предусмотреть, что мещ может быть не только треугольной формы
     pass
+
+
+def check_mesh_in_voxel(mesh_projection: [], voxel_projection: [], size_voxel: float):
+    """
+    Проверяет включение меша в вкосель
+    :param mesh_projection: проекция меша
+    :param voxel_projection: координата проекции вокселя
+    :param size_voxel: размер вокселя
+    :return: True, если включает в себя, False, если нет
+    """
+    return point_in_square(voxel_projection, size_voxel, mesh_projection[0]) or \
+        point_in_square(voxel_projection, size_voxel, mesh_projection[1]) or \
+        point_in_square(voxel_projection, size_voxel, mesh_projection[2])
+
+
+def point_in_square(square: [], size_square: float, point: []):
+    return square[0] <= point[0] <= square[0] + size_square and square[1] <= point[1] <= square[1] + size_square
+
+
+def check_voxel_in_mesh(mesh_projection: [], voxel_projection: [], size_voxel: float):
+    """
+    Проверяет включение вокселя в меш
+    :param mesh_projection: проекция меша
+    :param voxel_projection: проекция вокселя
+    :param size_voxel: размер вокселя
+    :return: True, если включает в себя, False, если нет
+    """
+    return point_in_triangle(voxel_projection, mesh_projection) or \
+        point_in_triangle([voxel_projection[0], voxel_projection[1] + size_voxel], mesh_projection) or \
+        point_in_triangle([voxel_projection[0] + size_voxel, voxel_projection[1]], mesh_projection) or \
+        point_in_triangle([voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel], mesh_projection)
+
+
+def point_in_triangle(point: [], triangle: []):
+    a = det(triangle[0], triangle[1], point)
+    b = det(triangle[1], triangle[2], point)
+    c = det(triangle[2], triangle[0], point)
+
+    return (a <= 0 and b <= 0 and c <= 0) or (a > 0 or b > 0 or c > 0)
+
+
+def det(p_1: [], p_2: [], p_3: []):
+    return (p_1[0] - p_3[0]) * (p_2[1] - p_1[1]) - (p_2[0] - p_1[0]) * (p_1[1] - p_3[1])
+
+
+def check_crossing_projections(voxel_projection: [], size_voxel: float, mesh_projections: []):
+    """
+    Проверяет пересечение проекции вокселя и проекции меша
+    :param voxel_projection: проекция вокселя
+    :param size_voxel: размер вокселя
+    :param mesh_projections: проекция меша
+    :return: True, если есть пересечение, False, во всех остальных случаях
+    """
+    for i in range(len(mesh_projections)):
+        if i + 1 <= len(mesh_projections):
+            return check_crossing_projection_and_line(voxel_projection, size_voxel, mesh_projections[i], mesh_projections[0])
+        else:
+            if check_crossing_projection_and_line(voxel_projection, size_voxel, mesh_projections[i], mesh_projections[i + 1]):
+                return True
+    return False
+
+
+def check_crossing_projection_and_line(voxel_projection: [], size_voxel: float, ver_1: [], ver_2: []):
+    """
+    Проверяет пересечение проекции вокселя с линией проекции меша
+    :param voxel_projection: координаты верхней левой вершины проекции вокселя
+    :param size_voxel: размер вокселя
+    :param ver_1: первая вершина
+    :param ver_2: вторая вершина
+    :return:
+    """
+    if check_crossing_lines(ver_1, ver_2, voxel_projection, [voxel_projection[0], voxel_projection[1] + size_voxel]):
+        return True
+    elif check_crossing_lines(ver_1, ver_2, voxel_projection, [voxel_projection[0] + size_voxel, voxel_projection[1]]):
+        return True
+    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0], voxel_projection[1] + size_voxel], [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
+        return True
+
+    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0] + size_voxel, voxel_projection[1]],  [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
+        return True
+    return False
+
+
+def check_crossing_lines(ver_1: [], ver_2: [], voxel_1: [], voxel_2: []):
+    """
+    Проверяет, пересекаются ли линия грани проекции вокселя и линия грани проекции
+     меша и находится ли точка пересечения между вершинами проекции вокселя
+    :param ver_1: Первая вершина проекции грани меша
+    :param ver_2: вторая вершина проекции грани меша
+    :param voxel_1: первая вершина проекции грани вокселя
+    :param voxel_2: вторая вершина проекции грани вокселя
+    :return: True, если есть пересечение и точка пересечения лежит между вершинами проекции грани вокселя,
+    False, в остальных случаях
+    """
+    devider = det_([ver_1[0] - ver_2[0], ver_1[1] - ver_2[1]], [voxel_1[0] - voxel_2[0], voxel_1[1] - voxel_2[1]])
+    if devider == 0:
+        a1 = ver_1[1] - ver_2[1]
+        b1 = ver_2[0] - ver_1[0]
+        c1 = ver_1[0] * ver_2[1] - ver_2[0] * ver_1[1]
+        a2 = voxel_1[1] - voxel_2[1]
+        b2 = voxel_2[0] - voxel_1[0]
+        c2 = voxel_1[0] * voxel_2[1] - voxel_2[0] * voxel_1[1]
+        if det_([a1, b1], [a2, b2]) == 0 and det_([a1, c1], [a2, c2]) == 0 and det_([b1, c1], [b2, c2]) == 0:
+            return voxel_1[0] <= ver_1[0] <= voxel_2[0] and voxel_1[1] <= ver_1[1] <= voxel_2[1] or \
+                   voxel_1[0] <= ver_2[0] <= voxel_2[0] and voxel_1[1] <= ver_2[1] <= voxel_2[1]
+
+        if det_([a1, b1], [a2, b2]) == 0:
+            return False
+
+    x = (det_(ver_1, ver_2) * (voxel_1[0] - voxel_2[0]) - (ver_1[0] - ver_2[0]) * det_(voxel_1, voxel_2)) / devider
+    y = (det_(ver_1, ver_2) * (voxel_1[1] - voxel_2[1]) - (ver_1[1] - ver_2[1]) * det_(voxel_1, voxel_2)) / devider
+
+    return voxel_1[0] <= x <= voxel_2[0] and voxel_1[1] <= y <= voxel_2[1]
+
+
+def det_(ver_1: [], ver_2: []):
+    return ver_1[0] * ver_2[1] - ver_2[0] * ver_1[1]
+

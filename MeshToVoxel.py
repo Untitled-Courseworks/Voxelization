@@ -1,4 +1,6 @@
 import math
+from Crossing import crossing
+import Visualization
 
 
 class Mesh:
@@ -16,10 +18,10 @@ def return_sample_pyramid():
     Пример простой пирамиды с треугольным основанием
     :return: Список меши пирамиды с треугольным основанием
     """
-    return [Mesh([0, -9, 0], [0, 0, 3], [0, 0, 0], [3, 0, 3]),
-            Mesh([9, 0, 0], [0, 0, 3], [0, 0, 0], [0, 3, 0]),
-            Mesh([0, 9, 9], [0, 0, 3], [3, 0, 3], [0, 3, 0]),
-            Mesh([-9, 0, 9], [0, 0, 0], [3, 0, 3], [0, 3, 0])]
+    return [[[0, -9, 0], [0, 0, 3], [0, 0, 0], [3, 0, 3]],
+            [[9, 0, 0], [0, 0, 3], [0, 0, 0], [0, 3, 0]],
+            [[0, 9, 9], [0, 0, 3], [3, 0, 3], [0, 3, 0]],
+            [[-9, 0, 9], [0, 0, 0], [3, 0, 3], [0, 3, 0]]]
 
 
 def return_sample_cube():
@@ -29,23 +31,23 @@ def return_sample_cube():
     :return: Список мешей куба
     """
     return [
-        Mesh([], [0, 3, 3], [3, 3, 3], [3, 0, 3]),
-        Mesh([], [0, 3, 3], [0, 0, 3], [3, 0, 3]),
+        [[0, 3, 3], [3, 3, 3], [3, 0, 3], []],
+        [[0, 3, 3], [0, 0, 3], [3, 0, 3], []],
 
-        Mesh([], [0, 3, 3], [0, 0, 3], [0, 0, 0]),
-        Mesh([], [0, 3, 3], [0, 3, 0], [0, 0, 0]),
+        [[0, 3, 3], [0, 0, 3], [0, 0, 0], []],
+        [[0, 3, 3], [0, 3, 0], [0, 0, 0], []],
 
-        Mesh([], [0, 3, 3], [3, 3, 3], [0, 3, 0]),
-        Mesh([], [0, 3, 3], [3, 3, 0], [0, 3, 0]),
+        [[0, 3, 3], [3, 3, 3], [0, 3, 0], []],
+        [[0, 3, 3], [3, 3, 0], [0, 3, 0], []],
 
-        Mesh([], [3, 0, 3], [0, 0, 3], [3, 3, 3]),
-        Mesh([], [3, 0, 3], [3, 0, 0], [3, 3, 3]),
+        [[3, 0, 3], [0, 0, 3], [3, 3, 3], []],
+        [[3, 0, 3], [3, 0, 0], [3, 3, 3], []],
 
-        Mesh([], [3, 3, 3], [3, 0, 3], [3, 0, 0]),
-        Mesh([], [3, 3, 3], [3, 3, 0], [3, 0, 0]),
+        [[3, 3, 3], [3, 0, 3], [3, 0, 0], []],
+        [[3, 3, 3], [3, 3, 0], [3, 0, 0], []],
 
-        Mesh([], [0, 3, 0], [3, 3, 0], [3, 0, 0]),
-        Mesh([], [0, 3, 0], [0, 0, 0], [3, 0, 0]),
+        [[0, 3, 0], [3, 3, 0], [3, 0, 0], []],
+        [[0, 3, 0], [0, 0, 0], [3, 0, 0], []],
     ]
 
 
@@ -61,9 +63,9 @@ def find_size_model(model: []):
 
     for v in model:
         for i in range(3):
-            compare(min, max, v.V1, i)
-            compare(min, max, v.V2, i)
-            compare(min, max, v.V3, i)
+            compare(min, max, v[0], i)
+            compare(min, max, v[1], i)
+            compare(min, max, v[2], i)
 
     return [max[i] - min[i] for i in range(3)]
 
@@ -81,115 +83,18 @@ def get_voxel_model(model, size_mod):
     for z in range(math.ceil(size_mod[2] / size)):
         for y in range(math.ceil(size_mod[1] / size)):
             for x in range(math.ceil(size_mod[0] / size)):
-                if is_voxel([x, y, z], model, size):
-                    res.append([x, y, z])
+                for m in model:
+                    if crossing(m, [x, y, z], size):
+                        res.append([x, y, z])
     return res
-
-
-def is_voxel(voxel: [], model: [], size_voxel: float):
-    # TODO
-    #  Нет проверки, когда меш полностью внутри проекции
-    #  Нет проверки, когда воксель внутри меша
-
-    for mesh in model:
-        if check_all_projection(voxel, size_voxel, mesh.V1, mesh.V2):
-            return True
-        elif check_all_projection(voxel, size_voxel, mesh.V1, mesh.V3):
-            return True
-        elif check_all_projection(voxel, size_voxel, mesh.V2, mesh.V3):
-            return True
-    return False
-
-
-def check_voxel_in_mesh(mesh: Mesh, voxel_projection: [], size_voxel: float):
-    pass
-
-
-def point_in_triangle(point: [], triangle: Mesh):
-    # TODO
-    a = (triangle.V1[] - PTest.X) * (P2.Y - P1.Y) - (P2.X - P1.X) * (P1.Y - PTest.Y)
-    b = (P2.X - PTest.X) * (P3.Y - P2.Y) - (P3.X - P2.X) * (P2.Y - PTest.Y)
-    c = (P3.X - PTest.X) * (P1.Y - P3.Y) - (P1.X - P3.X) * (P3.Y - PTest.Y)
-
-
-def check_mesh_in_voxel(mesh: Mesh, voxel_projection: [], size_voxel: float):
-    return point_in_square(voxel_projection, size_voxel, mesh.V1) or \
-           point_in_square(voxel_projection, size_voxel, mesh.V2) or \
-           point_in_square(voxel_projection, size_voxel, mesh.V3)
-
-
-def point_in_square(square: [], size_square: float, point: []):
-    return square[0] <= point[0] <= square[0] + size_square and square[1] <= point[1] <= square[1] + size_square
-
-
-def check_all_projection(voxel: [], size_voxel: float, ver_1: [], ver_2: []):
-    # TODO
-    #  Как меши проецируются на разные плоскости то?
-    return check_crossing_projection([voxel[0], voxel[1]], size_voxel, ver_1, ver_2) and \
-           check_crossing_projection([voxel[1], voxel[2]], size_voxel, ver_1, ver_2) and \
-           check_crossing_projection([voxel[0], voxel[2]], size_voxel, ver_1, ver_2)
-
-
-def check_crossing_projection(voxel_projection: [], size_voxel: float, ver_1: [], ver_2: []):
-    """
-    Проверяет пересечение проекции вокселя с линией проекции меша
-    :param voxel_projection: координаты верхней левой вершины проекции вокселя
-    :param size_voxel: размер вокселя
-    :param ver_1: первая вершина
-    :param ver_2: вторая вершина
-    :return:
-    """
-    if check_crossing_lines(ver_1, ver_2, voxel_projection, [voxel_projection[0], voxel_projection[1] + size_voxel]):
-        return True
-    elif check_crossing_lines(ver_1, ver_2, voxel_projection, [voxel_projection[0] + size_voxel, voxel_projection[1]]):
-        return True
-    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0], voxel_projection[1] + size_voxel], [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
-        return True
-
-    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0] + size_voxel, voxel_projection[1]],  [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
-        return True
-    return False
-
-
-def check_crossing_lines(ver_1: [], ver_2: [], voxel_1: [], voxel_2: []):
-    """
-    Проверяет, пересекаются ли две линии и находится ли точка пересечения между вершинами вокселя
-    :param ver_1: Первая вершина меша
-    :param ver_2: вторая вершина меша
-    :param voxel_1: первая вершина вокселя
-    :param voxel_2: вторая вершина вокселя
-    :return:
-    """
-    devider = det([ver_1[0] - ver_2[0], ver_1[1] - ver_2[1]], [voxel_1[0] - voxel_2[0], voxel_1[1] - voxel_2[1]])
-    if devider == 0:
-        a1 = ver_1[1] - ver_2[1]
-        b1 = ver_2[0] - ver_1[0]
-        c1 = ver_1[0] * ver_2[1] - ver_2[0] * ver_1[1]
-        a2 = voxel_1[1] - voxel_2[1]
-        b2 = voxel_2[0] - voxel_1[0]
-        c2 = voxel_1[0] * voxel_2[1] - voxel_2[0] * voxel_1[1]
-        if det([a1, b1], [a2, b2]) == 0 and det([a1, c1], [a2, c2]) == 0 and det([b1, c1], [b2, c2]) == 0:
-            return voxel_1[0] <= ver_1[0] <= voxel_2[0] and voxel_1[1] <= ver_1[1] <= voxel_2[1] or \
-                   voxel_1[0] <= ver_2[0] <= voxel_2[0] and voxel_1[1] <= ver_2[1] <= voxel_2[1]
-
-        if det([a1, b1], [a2, b2]) == 0:
-            return False
-
-    x = (det(ver_1, ver_2) * (voxel_1[0] - voxel_2[0]) - (ver_1[0] - ver_2[0]) * det(voxel_1, voxel_2)) / devider
-    y = (det(ver_1, ver_2) * (voxel_1[1] - voxel_2[1]) - (ver_1[1] - ver_2[1]) * det(voxel_1, voxel_2)) / devider
-
-    return voxel_1[0] <= x <= voxel_2[0] and voxel_1[1] <= y <= voxel_2[1]
-
-
-def det(ver_1: [], ver_2: []):
-    return ver_1[0] * ver_2[1] - ver_2[0] * ver_1[1]
 
 
 # Временно
 size = 1
-model = return_sample_cube()
+model = return_sample_pyramid()
 size_mod = find_size_model(model)
 voxels = get_voxel_model(model, size_mod)
+Visualization.get_model(voxels)
 print(len(voxels))
 
 # print(check_crossing_lines([2, 0], [4, 0], [1, 0], [3, 0]))

@@ -9,9 +9,10 @@ def crossing(mesh: [], voxel: [], size_voxel: float):
     # TODO
     #   Предусмотреть, что меш может быть не только треугольной формы
     mesh_projections = get_all_projections(mesh, 3)
-    voxel_projections = get_all_projections(voxel, len(voxel))
+    voxel_projections = get_all_projections([voxel], 1)
+    temp = voxel_projections[0]
     for i in range(3):
-        if not check_all(mesh_projections[i], voxel_projections[i], size_voxel):
+        if not check_all(mesh_projections[i], voxel_projections[i][0], size_voxel):
             return False
     return True
 
@@ -19,9 +20,10 @@ def crossing(mesh: [], voxel: [], size_voxel: float):
 def get_all_projections(vertices: [], count_vertices: int):
     """
     Проецирует точки на три плоскости: XY, XZ, YZ
+    Принимает данные в формате [[x, y, z], [x, y, z], ...]
     :param vertices: вершины
     :param count_vertices: количество вершин, которые надо спроецировать
-    :return: список с проекциями в формате [[проекции точек на XY], [проекции точек на XZ], [проекции точек на YZ]]
+    :return: список с проекциями в формате [[[x, y], [x, y], ...], [[x, z], [x, z], ...], [[y, z], [y, z], ...]]
     """
     x_y = []
     x_z = []

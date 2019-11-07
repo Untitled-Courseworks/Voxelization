@@ -41,12 +41,6 @@ class TestsCheckMeshInVoxel(unittest.TestCase):
         res = Cr.check_mesh_in_voxel(mesh, voxel, 4)
         self.assertTrue(res)
 
-    def test_vertex_mesh_on_vertex_voxel(self):
-        voxel = [0, 0]
-        mesh = [[4, 0], [5, 0], [5, 2]]
-        res = Cr.check_mesh_in_voxel(mesh, voxel, 4)
-        self.assertTrue(res)
-
     def test_mesh_outside_voxel(self):
         voxel = [0, 0]
         mesh = [[4, 0], [5, 0], [5, 2]]
@@ -64,6 +58,12 @@ class TestsCheckMeshInVoxel(unittest.TestCase):
         voxel = [1, 1]
         res = Cr.check_mesh_in_voxel(mesh, voxel, 1)
         self.assertFalse(res)
+
+    def test_vertex_voxel_on_vertex_mesh(self):
+        mesh = [[0, 0], [5, 0], [2, 4]]
+        voxel = [5, 0]
+        res = Cr.check_mesh_in_voxel(mesh, voxel, 1)
+        self.assertTrue(res)
 
 
 class TestsCheckVoxelInMesh(unittest.TestCase):
@@ -96,14 +96,88 @@ class TestsCheckVoxelInMesh(unittest.TestCase):
         mesh = [[0, 0], [5, 0], [2, 4]]
         voxel = [5, 0]
         res = Cr.check_voxel_in_mesh(mesh, voxel, 1)
-        self.assertTrue(res)
+        self.assertFalse(res)
 
     def test_zero_vertex_in_mesh_but_crossing(self):
-        # TODO
-        #  Какого хера?!
         mesh = [[0, 0], [5, 0], [2, 4]]
         voxel = [0, 3]
         res = Cr.check_voxel_in_mesh(mesh, voxel, 4)
+        self.assertFalse(res)
+
+    def test_two_joint_vertex(self):
+        mesh = [[1, 0], [2, 0], [1, 1]]
+        voxel = [0, 0]
+        res = Cr.check_voxel_in_mesh(mesh, voxel, 1)
+        self.assertFalse(res)
+
+
+class TestsCheckCrossingLines(unittest.TestCase):
+
+    def test_crossing_point_between_voxels_points(self):
+        res = Cr.check_crossing_lines([2, 3], [2, -3], [0, 0], [4, 0])
+        self.assertTrue(res)
+
+        res = Cr.check_crossing_lines([0, 3], [4, -3], [0, 0], [4, 0])
+        self.assertTrue(res)
+
+        res = Cr.check_crossing_lines([-1, 3], [5, -3], [0, 0], [4, 0])
+        self.assertTrue(res)
+
+    def test_crossing_point_not_between_voxels_points(self):
+        res = Cr.check_crossing_lines([-3, 3], [-3, -3], [0, 0], [4, 0])
+        self.assertFalse(res)
+
+        res = Cr.check_crossing_lines([-3, 3], [0, -3], [0, 0], [4, 0])
+        self.assertFalse(res)
+
+        res = Cr.check_crossing_lines([0, 2], [4, 1], [0, 0], [4, 0])
+        self.assertFalse(res)
+
+    def test_parallel(self):
+        res = Cr.check_crossing_lines([0, 2], [4, 2], [0, 0], [4, 0])
+        self.assertFalse(res)
+
+        res = Cr.check_crossing_lines([-1, 2], [1, 2], [0, 0], [4, 0])
+        self.assertFalse(res)
+
+        res = Cr.check_crossing_lines([-1, 2], [5, 2], [0, 0], [4, 0])
+        self.assertFalse(res)
+
+    def test_similarity(self):
+        res = Cr.check_crossing_lines([1, 0], [2, 0], [0, 0], [4, 0])
+        self.assertTrue(res)
+
+        res = Cr.check_crossing_lines([1, 0], [5, 0], [0, 0], [4, 0])
+        self.assertTrue(res)
+
+        res = Cr.check_crossing_lines([0, 0], [4, 0], [0, 0], [4, 0])
+        self.assertTrue(res)
+
+        res = Cr.check_crossing_lines([-1, 0], [4, 0], [0, 0], [4, 0])
+        self.assertTrue(res)
+
+        res = Cr.check_crossing_lines([0, 0], [5, 0], [0, 0], [4, 0])
+        self.assertTrue(res)
+
+        res = Cr.check_crossing_lines([-1, 0], [5, 0], [0, 0], [4, 0])
+        self.assertFalse(res)
+
+    def test_crossing_point_between_voxels_points_but_not_between_mesh_points(self):
+        res = Cr.check_crossing_lines([2, 3], [2, 2], [0, 0], [4, 0])
+        self.assertFalse(res)
+
+
+class TestsCheckCrossingProjectionAndLine(unittest.TestCase):
+    # TODO
+    def test_crossing_one_point_in_voxel(self):
+        voxel = [0, 0]
+        ver_1 = [1, 1]
+        ver_2 = [1, 3]
+        res = Cr.check_crossing_projection_and_line(voxel, 2, ver_1, ver_2)
+        self.assertTrue(res)
+
+    def test_crossing_zero_point_in_mesh_line(self):
+        res = Cr.check_crossing_projection_and_line([0, 0], 2, [1, 3], [1, 4])
         self.assertFalse(res)
 
 

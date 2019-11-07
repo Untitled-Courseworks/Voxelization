@@ -91,9 +91,10 @@ def get_voxel_model(model, size_mod):
 
 # Временно
 size = 1
-model = return_sample_pyramid()
+model = return_sample_cube()
 size_mod = find_size_model(model)
 voxels = get_voxel_model(model, size_mod)
+print(len(voxels))
 Visualization.get_model(voxels)
 print(len(voxels))
 

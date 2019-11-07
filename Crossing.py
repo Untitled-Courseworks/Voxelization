@@ -10,7 +10,6 @@ def crossing(mesh: [], voxel: [], size_voxel: float):
     #   Предусмотреть, что меш может быть не только треугольной формы
     mesh_projections = get_all_projections(mesh, 3)
     voxel_projections = get_all_projections([voxel], 1)
-    temp = voxel_projections[0]
     for i in range(3):
         if not check_all(mesh_projections[i], voxel_projections[i][0], size_voxel):
             return False
@@ -61,8 +60,8 @@ def check_mesh_in_voxel(mesh_projection: [], voxel_projection: [], size_voxel: f
     :return: True, если включает в себя, False, если нет
     """
     return point_in_square(voxel_projection, size_voxel, mesh_projection[0]) or \
-           point_in_square(voxel_projection, size_voxel, mesh_projection[1]) or \
-           point_in_square(voxel_projection, size_voxel, mesh_projection[2])
+        point_in_square(voxel_projection, size_voxel, mesh_projection[1]) or \
+        point_in_square(voxel_projection, size_voxel, mesh_projection[2])
 
 
 def point_in_square(square: [], size_square: float, point: []):
@@ -78,9 +77,9 @@ def check_voxel_in_mesh(mesh_projection: [], voxel_projection: [], size_voxel: f
     :return: True, если включает в себя, False, если нет
     """
     return point_in_triangle(voxel_projection, mesh_projection) or \
-           point_in_triangle([voxel_projection[0], voxel_projection[1] + size_voxel], mesh_projection) or \
-           point_in_triangle([voxel_projection[0] + size_voxel, voxel_projection[1]], mesh_projection) or \
-           point_in_triangle([voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel], mesh_projection)
+        point_in_triangle([voxel_projection[0], voxel_projection[1] + size_voxel], mesh_projection) or \
+        point_in_triangle([voxel_projection[0] + size_voxel, voxel_projection[1]], mesh_projection) or \
+        point_in_triangle([voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel], mesh_projection)
 
 
 def point_in_triangle(point: [], triangle: []):
@@ -88,7 +87,7 @@ def point_in_triangle(point: [], triangle: []):
     b = det(triangle[1], triangle[2], point)
     c = det(triangle[2], triangle[0], point)
 
-    return (a <= 0 and b <= 0 and c <= 0) or (a > 0 or b > 0 or c > 0)
+    return (a <= 0 and b <= 0 and c <= 0) or (a > 0 and b > 0 and c > 0)
 
 
 def det(p_1: [], p_2: [], p_3: []):
@@ -166,7 +165,20 @@ def check_crossing_lines(ver_1: [], ver_2: [], voxel_1: [], voxel_2: []):
     x = (det_(ver_1, ver_2) * (voxel_1[0] - voxel_2[0]) - (ver_1[0] - ver_2[0]) * det_(voxel_1, voxel_2)) / devider
     y = (det_(ver_1, ver_2) * (voxel_1[1] - voxel_2[1]) - (ver_1[1] - ver_2[1]) * det_(voxel_1, voxel_2)) / devider
 
-    return voxel_1[0] <= x <= voxel_2[0] and voxel_1[1] <= y <= voxel_2[1]
+    return point_between_two_points(voxel_1, voxel_2, [x, y]) and point_between_two_points(ver_1, ver_2, [x, y])
+
+
+def point_between_two_points(p_1: [], p_2: [], cur_p: []):
+    dxl = p_2[0] - p_1[0]
+    dyl = p_2[1] - p_1[1]
+    if abs(dxl) >= abs(dyl):
+        if dxl > 0:
+            return p_1[0] <= cur_p[0] <= p_2[0]
+        return p_2[0] <= cur_p[0] <= p_1[0]
+    else:
+        if dyl > 0:
+            return p_1[1] <= cur_p[1] <= p_2[1]
+        return p_2[1] <= cur_p[1] <= p_1[1]
 
 
 def det_(ver_1: [], ver_2: []):

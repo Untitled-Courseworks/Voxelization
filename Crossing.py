@@ -1,8 +1,53 @@
-def crossing(mesh: [], voxel: []):
+def crossing(mesh: [], voxel: [], size_voxel: float):
+    """
+    Проверка, что у меша и вокселя есть общие точки
+    :param mesh: меш
+    :param voxel: координаты одной вершины вокселя
+    :param size_voxel: размер вокселя
+    :return: True, если есть общее количество точек и False - в противном случае
+    """
     # TODO
-    #   Написать проекцию меша и вокселя на каждую плоскость
-    #   Предусмотреть, что мещ может быть не только треугольной формы
-    pass
+    #   Предусмотреть, что меш может быть не только треугольной формы
+    mesh_projections = get_all_projections(mesh, 3)
+    voxel_projections = get_all_projections(voxel, len(voxel))
+    for i in range(3):
+        if not check_all(mesh_projections[i], voxel_projections[i], size_voxel):
+            return False
+    return True
+
+
+def get_all_projections(vertices: [], count_vertices: int):
+    """
+    Проецирует точки на три плоскости: XY, XZ, YZ
+    :param vertices: вершины
+    :param count_vertices: количество вершин, которые надо спроецировать
+    :return: список с проекциями в формате [[проекции точек на XY], [проекции точек на XZ], [проекции точек на YZ]]
+    """
+    x_y = []
+    x_z = []
+    y_z = []
+    for i in range(count_vertices):
+        x_y.append([vertices[i][0], vertices[i][1]])
+        x_z.append([vertices[i][0], vertices[i][2]])
+        y_z.append([vertices[i][1], vertices[i][2]])
+    return [x_y, x_z, y_z]
+
+
+def check_all(mesh_projection: [], voxel_projection: [], size_voxel: float):
+    """
+    Объединяет все проверки
+    :param mesh_projection: проекция меша
+    :param voxel_projection: проекция вокселя
+    :param size_voxel: размер вокселя
+    :return: True, если есть общие точки, False, во всех остальных случаях
+    """
+    if check_mesh_in_voxel(mesh_projection, voxel_projection, size_voxel):
+        return True
+    if check_voxel_in_mesh(mesh_projection, voxel_projection, size_voxel):
+        return True
+    if check_crossing_projections(voxel_projection, size_voxel, mesh_projection):
+        return True
+    return False
 
 
 def check_mesh_in_voxel(mesh_projection: [], voxel_projection: [], size_voxel: float):
@@ -14,8 +59,8 @@ def check_mesh_in_voxel(mesh_projection: [], voxel_projection: [], size_voxel: f
     :return: True, если включает в себя, False, если нет
     """
     return point_in_square(voxel_projection, size_voxel, mesh_projection[0]) or \
-        point_in_square(voxel_projection, size_voxel, mesh_projection[1]) or \
-        point_in_square(voxel_projection, size_voxel, mesh_projection[2])
+           point_in_square(voxel_projection, size_voxel, mesh_projection[1]) or \
+           point_in_square(voxel_projection, size_voxel, mesh_projection[2])
 
 
 def point_in_square(square: [], size_square: float, point: []):
@@ -31,9 +76,9 @@ def check_voxel_in_mesh(mesh_projection: [], voxel_projection: [], size_voxel: f
     :return: True, если включает в себя, False, если нет
     """
     return point_in_triangle(voxel_projection, mesh_projection) or \
-        point_in_triangle([voxel_projection[0], voxel_projection[1] + size_voxel], mesh_projection) or \
-        point_in_triangle([voxel_projection[0] + size_voxel, voxel_projection[1]], mesh_projection) or \
-        point_in_triangle([voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel], mesh_projection)
+           point_in_triangle([voxel_projection[0], voxel_projection[1] + size_voxel], mesh_projection) or \
+           point_in_triangle([voxel_projection[0] + size_voxel, voxel_projection[1]], mesh_projection) or \
+           point_in_triangle([voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel], mesh_projection)
 
 
 def point_in_triangle(point: [], triangle: []):
@@ -58,9 +103,11 @@ def check_crossing_projections(voxel_projection: [], size_voxel: float, mesh_pro
     """
     for i in range(len(mesh_projections)):
         if i + 1 <= len(mesh_projections):
-            return check_crossing_projection_and_line(voxel_projection, size_voxel, mesh_projections[i], mesh_projections[0])
+            return check_crossing_projection_and_line(voxel_projection, size_voxel, mesh_projections[i],
+                                                      mesh_projections[0])
         else:
-            if check_crossing_projection_and_line(voxel_projection, size_voxel, mesh_projections[i], mesh_projections[i + 1]):
+            if check_crossing_projection_and_line(voxel_projection, size_voxel, mesh_projections[i],
+                                                  mesh_projections[i + 1]):
                 return True
     return False
 
@@ -78,10 +125,12 @@ def check_crossing_projection_and_line(voxel_projection: [], size_voxel: float, 
         return True
     elif check_crossing_lines(ver_1, ver_2, voxel_projection, [voxel_projection[0] + size_voxel, voxel_projection[1]]):
         return True
-    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0], voxel_projection[1] + size_voxel], [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
+    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0], voxel_projection[1] + size_voxel],
+                              [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
         return True
 
-    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0] + size_voxel, voxel_projection[1]],  [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
+    elif check_crossing_lines(ver_1, ver_2, [voxel_projection[0] + size_voxel, voxel_projection[1]],
+                              [voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel]):
         return True
     return False
 
@@ -120,4 +169,3 @@ def check_crossing_lines(ver_1: [], ver_2: [], voxel_1: [], voxel_2: []):
 
 def det_(ver_1: [], ver_2: []):
     return ver_1[0] * ver_2[1] - ver_2[0] * ver_1[1]
-

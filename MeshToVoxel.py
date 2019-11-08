@@ -86,6 +86,7 @@ def get_voxel_model(model, size_mod):
                 for m in model:
                     if crossing(m, [x, y, z], size):
                         res.append([x, y, z])
+                        break
     return res
 
 

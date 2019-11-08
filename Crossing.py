@@ -103,7 +103,7 @@ def check_crossing_projections(voxel_projection: [], size_voxel: float, mesh_pro
     :return: True, если есть пересечение, False, во всех остальных случаях
     """
     for i in range(len(mesh_projections)):
-        if i + 1 <= len(mesh_projections):
+        if i + 1 == len(mesh_projections):
             return check_crossing_projection_and_line(voxel_projection, size_voxel, mesh_projections[i],
                                                       mesh_projections[0])
         else:

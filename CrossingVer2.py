@@ -1,5 +1,8 @@
 def crossing(voxel: [], size_voxel: float, mesh: []):
     crossing_points = _get_list_crossing_points(voxel, size_voxel, mesh)
+    if crossing_points is None:
+        #TODO
+        pass
     crossing_points = _get_all_projections(crossing_points, len(crossing_points))
     mesh_projections = _get_all_projections(mesh, len(mesh) - 1)
     for i in range(3):
@@ -7,7 +10,6 @@ def crossing(voxel: [], size_voxel: float, mesh: []):
             if not _point_in_triangle(point, mesh_projections[i]):
                 return False
     return True
-
 
 
 def _get_all_projections(vertices: [], count_vertices: int):
@@ -52,10 +54,13 @@ def _get_list_crossing_points(voxel: [], size_voxel: float, mesh: []):
     :param voxel: точка вокселя
     :param size_voxel: размер ребра вокселя
     :param mesh: коодинаты меша
-    :return: список точек пересечения в формате [[x, y, z], [x, y, z], ...]. Может быть от 0 до 6
+    :return: список точек пересечения в формате [[x, y, z], [x, y, z], ...]. Может быть от 0 до 6 или None,
+    если меш представляет собой линию
     """
     all_edges_voxel = _get_all_edges(voxel, size_voxel)
     coefficients = _get_coefficients_plane(mesh[0], mesh[1], mesh[2])
+    if coefficients == [0, 0, 0, 0]:
+        return None
     res = []
     for edge in all_edges_voxel:
         temp = _get_crossing_point(edge[0], edge[1], coefficients)
@@ -137,3 +142,23 @@ def _get_crossing_point(p1: [], p2: [], plane: []):
 def _get_parameter(p1: [], p2: [], plane: []):
     return - (plane[0] * p1[0] + plane[1] * p1[1] + plane[2] * p1[2] + plane[3]) / \
         (plane[0] * (p2[0] - p1[0]) + plane[1] * (p2[1] - p1[1]) + plane[2] * (p2[2] - p1[2]))
+
+
+def _check_crossing_segment(ver_1: [], ver_2: [], voxel_1: [], voxel_2: []):
+    """
+    Проверяет, пересекаются ли линия грани проекции вокселя и линия грани проекции
+     меша и находится ли точка пересечения между вершинами проекции вокселя
+    :param ver_1: Первая вершина проекции грани меша
+    :param ver_2: вторая вершина проекции грани меша
+    :param voxel_1: первая вершина проекции грани вокселя
+    :param voxel_2: вторая вершина проекции грани вокселя
+    :return: True, если есть пересечение и точка пересечения лежит между вершинами проекции грани вокселя,
+    False, в остальных случаях
+    """
+    pass
+
+
+def direction(p1: float, p2: float, p3: float):
+    # TODO р1 - р3 - не координаты, а тычки с координатами
+    return (p3 - p1) * (p2 - p1)
+

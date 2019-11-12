@@ -1,5 +1,5 @@
 import math
-from CrossingVer2 import crossing as _crossing
+from Crossing import crossing as _crossing
 import Visualization
 
 

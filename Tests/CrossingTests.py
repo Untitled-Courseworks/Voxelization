@@ -322,8 +322,62 @@ class TestsCheckAll(unittest.TestCase):
         self.assertTrue(res)
 
 class TestsCrossing(unittest.TestCase):
-    # TODO
-    pass
+
+    def test_mesh_on_side_voxel_inside(self):
+        mesh = [[1, 1, 0], [3, 1, 0], [2, 3, 0]]
+        res = Cr.crossing(mesh, [0, 0, 0], 4)
+        self.assertTrue(res)
+
+        mesh = [[1, 1, 4], [3, 1, 4], [2, 3, 4]]
+        res = Cr.crossing(mesh, [0, 0, 0], 4)
+        self.assertTrue(res)
+
+        mesh = [[1, 4, 1], [3, 4, 1], [2, 4, 3]]
+        res = Cr.crossing(mesh, [0, 0, 0], 4)
+        self.assertTrue(res)
+
+        mesh = [[1, 0, 1], [3, 0, 1], [2, 0, 3]]
+        res = Cr.crossing(mesh, [0, 0, 0], 4)
+        self.assertTrue(res)
+
+        mesh = [[1, 1, 0], [3, 1, 0], [2, 3, 0]]
+        res = Cr.crossing(mesh, [0, 0, 0], 4)
+        self.assertTrue(res)
+
+        mesh = [[1, 1, 4], [3, 1, 4], [2, 3, 4]]
+        res = Cr.crossing(mesh, [0, 0, 0], 4)
+        self.assertTrue(res)
+
+    def test_mesh_on_side_voxel_outside(self):
+        mesh = [[0, 0, 1], [3, 3, 1], [6, 0, 1]]
+        res = Cr.crossing(mesh, [1, 1, 1], 1)
+        self.assertTrue(res)
+
+        mesh = [[0, 0, 2], [3, 3, 2], [6, 0, 2]]
+        res = Cr.crossing(mesh, [1, 1, 1], 1)
+        self.assertTrue(res)
+
+        mesh = [[0, 1, 0], [3, 1, 3], [6, 1, 0]]
+        res = Cr.crossing(mesh, [1, 1, 1], 1)
+        self.assertTrue(res)
+
+        mesh = [[0, 2, 0], [3, 2, 3], [6, 2, 0]]
+        res = Cr.crossing(mesh, [1, 1, 1], 1)
+        self.assertTrue(res)
+
+        mesh = [[1, 0, 0], [1, 3, 3], [1, 6, 0]]
+        res = Cr.crossing(mesh, [1, 1, 1], 1)
+        self.assertTrue(res)
+
+        mesh = [[2, 0, 0], [2, 3, 3], [2, 6, 0]]
+        res = Cr.crossing(mesh, [1, 1, 1], 1)
+        self.assertTrue(res)
+
+
+    def test_mesh_in_voxel(self):
+        mesh = [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
+        res = Cr.crossing(mesh, [0, 0, 0], 4)
+        self.assertTrue(res)
 
 
 if __name__ == '__main__':

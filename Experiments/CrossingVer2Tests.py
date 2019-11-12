@@ -1,5 +1,5 @@
 import unittest
-import CrossingVer2 as Cr
+from Experiments import CrossingVer2 as Cr
 
 
 class TestsPointInTriangle(unittest.TestCase):

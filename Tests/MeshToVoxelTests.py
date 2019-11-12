@@ -1,6 +1,6 @@
+import Visualization
 import MeshToVoxel as MV
 import unittest
-import Visualization
 from Tests import Samples
 
 
@@ -33,8 +33,7 @@ class TestsMeshToVoxel(unittest.TestCase):
     def test_pyramid(self):
         # TODO Ошибка объявления начальных вокселей
         pyramid = Samples.pyramid()
-        size = Samples.find_size_model(pyramid)
-        model = MV.get_voxel_model(pyramid, size, 1)
+        model = MV.get_voxel_model(pyramid, [[0, 3], [0, 3], [0, 3]], 0.1)
         Visualization.get_model(model)
 
 

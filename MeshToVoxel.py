@@ -30,3 +30,4 @@ def get_voxel_model(model, size_mod, size_voxel):
             y += size_voxel
         z += size_voxel
     return res
+

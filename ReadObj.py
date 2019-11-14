@@ -2,6 +2,8 @@ import math
 
 
 def read_file(path: str):
+    # TODO
+    #  Работает не правильно, переделать
     """
     Возвращает список мешей из файла по указаному пути
     :param path: путь к файлу
@@ -14,7 +16,9 @@ def read_file(path: str):
         for string in file:
             temp = string.split()
             if temp[0] == "f":
-                res.append([points[0][int(i)] for i in temp[1:]])
+                test = len(points)
+                temp = [i.split("/")[0] for i in temp[1:]]
+                res.append([points[0][int(i) - 2] for i in temp])
 
     return res, points[1], points[2], points[3]
 
@@ -50,7 +54,3 @@ def _get_list_vertex(file):
         if len(points) > 0 and temp[0].lower() != "v":
             break
     return points, [min_x, max_x], [min_y, max_y], [min_z, max_z]
-
-
-test = read_file("Tests/test.obj")
-print(len(test))

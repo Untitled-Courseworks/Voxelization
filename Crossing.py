@@ -8,6 +8,7 @@ def crossing(mesh: [], voxel: [], size_voxel: float):
     """
     # TODO
     #   Предусмотреть, что меш может быть не только треугольной формы
+    #   Написать метод, определяюший принадлежность точки к многоугольнику
     mesh_projections = _get_all_projections(mesh, 3)
     voxel_projections = _get_all_projections([voxel], 1)
     for i in range(3):
@@ -59,6 +60,7 @@ def _check_mesh_in_voxel(mesh_projection: [], voxel_projection: [], size_voxel: 
     :param size_voxel: размер вокселя
     :return: True, если включает в себя, False, если нет
     """
+    # TODO Меш не только треугольный
     return _point_in_square(voxel_projection, size_voxel, mesh_projection[0]) or \
            _point_in_square(voxel_projection, size_voxel, mesh_projection[1]) or \
            _point_in_square(voxel_projection, size_voxel, mesh_projection[2])

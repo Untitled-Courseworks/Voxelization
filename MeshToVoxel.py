@@ -2,6 +2,7 @@ import math
 from Crossing import crossing as _crossing
 import ReadObj
 import Visualization
+import OcTree
 
 
 def get_voxel_model(model, size_mod, size_voxel):
@@ -31,3 +32,6 @@ def get_voxel_model(model, size_mod, size_voxel):
         z += size_voxel
     return res
 
+model = ReadObj.read_file("Tests/test.obj")
+test = OcTree.get_octree(model[0], [model[1], model[2], model[3]], 0.05)
+print(test)

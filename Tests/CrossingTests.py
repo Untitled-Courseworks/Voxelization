@@ -321,6 +321,7 @@ class TestsCheckAll(unittest.TestCase):
         res = Cr._check_all(mesh, [1, 1], 1)
         self.assertTrue(res)
 
+
 class TestsCrossing(unittest.TestCase):
 
     def test_mesh_on_side_voxel_inside(self):
@@ -373,11 +374,15 @@ class TestsCrossing(unittest.TestCase):
         res = Cr.crossing(mesh, [1, 1, 1], 1)
         self.assertTrue(res)
 
-
     def test_mesh_in_voxel(self):
         mesh = [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
         res = Cr.crossing(mesh, [0, 0, 0], 4)
         self.assertTrue(res)
+
+    def test_hard(self):
+        mesh = [[1, 1, 1], [2, 3, 2], [3, 3, 3]]
+        res = Cr.crossing(mesh, [0, 0, 0], 0.5)
+        self.assertFalse(res)
 
 
 if __name__ == '__main__':

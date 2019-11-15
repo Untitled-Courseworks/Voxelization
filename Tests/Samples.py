@@ -1,4 +1,5 @@
 import math
+from OcTree.NodeOcTree import Node
 
 
 def cube():
@@ -72,3 +73,10 @@ def _compare(min: [], max: [], vertex: [], i: int):
         min[i] = vertex[i]
     if max[i] < vertex[i]:
         max[i] = vertex[i]
+
+
+def get_empty_node_with_empty_children(size=1.0):
+    res = Node(None, size, [0, 0, 0], [])
+    res.add_children()
+    return res
+

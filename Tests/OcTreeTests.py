@@ -1,5 +1,5 @@
 import unittest
-import OcTree
+from Experiments import OcTree
 
 
 def get_empty_node_with_empty_children(size=1.0):

@@ -138,7 +138,7 @@ def _for_tested(node: Node):
         if 0 in temp:
             points_on_bounding_boxes.append(vert)
             continue
-        _find_child_and_add_mesh(temp, vert, node)
+        node.find_child_and_add_mesh(temp, vert, node)
     node.Meshes = points_on_bounding_boxes
 
 
@@ -156,7 +156,7 @@ def _distribution(node: Node):
             if 0 in i or i != reference:
                 meshes_on_bounding_boxes.append(mesh)
                 break
-        _find_child_and_add_mesh(reference, mesh, node)
+        node.find_child_and_add_mesh(reference, mesh, node)
 
     node.Meshes = meshes_on_bounding_boxes
 
@@ -169,7 +169,3 @@ def _get_bounding_box_for_mesh(mesh: [], node: Node):  # Протестиров�
     :return:
     """
     return [[node.checking_location_point_relative_plane(i, vert) for i in range(3)] for vert in mesh]
-
-
-def _find_child_and_add_mesh(pos_point: [], mesh: [], node: Node):  # Протестированно
-    node.find_and_get_child(pos_point).Meshes.append(mesh)

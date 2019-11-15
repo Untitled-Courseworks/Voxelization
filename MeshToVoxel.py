@@ -1,8 +1,6 @@
-import math
 from Crossing import crossing as _crossing
 import ReadObj
-import Visualization
-import OcTree
+from Experiments import OcTree
 
 
 def get_voxel_model(model, size_mod, size_voxel):

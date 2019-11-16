@@ -12,7 +12,7 @@ def check_crossing(node: Node, voxel: [], size: float):
     if node._check_crossing_with_meshes(voxel, size):
         return True
 
-    for n in node._return_crossing_with_voxel_bounding_boxes(voxel, size):
+    for n in node._get_crossing_with_voxel_bounding_boxes(voxel, size):
         check_crossing(n, voxel, size)
 
     return False

@@ -27,6 +27,10 @@ class Node:
         return 0
 
     def add_children(self):
+        """
+        Добавляет потомков
+        :return:
+        """
         def get_coordinate(mask: []):
             return [self.Coordinate[i] + mask[i] for i in range(3)]
         div_size = self.Size / 2
@@ -40,13 +44,18 @@ class Node:
         self.Children.append(Node(self, div_size, get_coordinate([div_size, 0, 0]), []))
         self.Children.append(Node(self, div_size, get_coordinate([0, 0, 0]), []))
 
-    def find_child_and_add_mesh(self, pos_point: [], mesh: []):  # Протестированно
+    def find_child_and_add_mesh(self, pos_point: [], mesh: []):  # Tested
+        """
+        Поиск нужного потомка и добавление меша
+        :param pos_point: позиционная координата
+        :param mesh: меш
+        :return:
+        """
         self._find_and_get_child(pos_point).Meshes.append(mesh)
 
     def check_crossing(self, voxel: [], size: float):
         """
         Поиск пересечений
-        :param node: Вершина, с которой надо начать поиск
         :param voxel: проверяемый воксель
         :param size: размер вокселя
         :return: True, если есть пересечение и False, если нет
@@ -54,23 +63,47 @@ class Node:
         if self._check_crossing_with_meshes(voxel, size):
             return True
 
-        for n in self._return_crossing_with_voxel_bounding_boxes(voxel, size):
-            n.check_crossing(n, voxel, size)
+        if len(self.Children) > 0:
+            for n in self._get_crossing_with_voxel_bounding_boxes(voxel, size):
+                if n.check_crossing(voxel, size):
+                    return True
 
         return False
 
-    def _check_crossing_with_meshes(self, voxel: [], size_voxel: float):
+    def _check_crossing_with_meshes(self, voxel: [], size_voxel: float):  # Tested
+        """
+        Проверяет пересечение мешей вершины и вокселя
+        :param voxel: воксель
+        :param size_voxel: размер вокселя
+        :return:
+        """
         for mesh in self.Meshes:
             if Crossing.crossing(mesh, voxel, size_voxel):
                 return True
         return False
 
-    def _return_crossing_with_voxel_bounding_boxes(self, voxel: [], size_voxel: float):
+    def _get_crossing_with_voxel_bounding_boxes(self, voxel: [], size_voxel: float):  # Tested
+        """
+        Определяет, каких потомков проверять дальше
+        :param voxel: воксель
+        :param size_voxel: размер вокселя
+        :return: ленивый список потомкав
+        """
+        children = []
         for vert in self._get_all_voxels_vertex(voxel, size_voxel):
             location = [self.checking_location_point_relative_plane(i, vert) for i in range(3)]
-            yield self._find_and_get_child(location)
+            if 0 in location:
+                continue
+            if location not in children:
+                children.append(location)
+                yield self._find_and_get_child(location)
 
-    def _find_and_get_child(self, pos_point: []):  # Протестированно
+    def _find_and_get_child(self, pos_point: []):  # Tested
+        """
+        Ищет по позиционным координатам потомка
+        :param pos_point: позиционная координата
+        :return:
+        """
         # TODO Сделать из этой херни конфетку
         if 0 in pos_point:
             raise Exception("pos_point shouldn't contains 0")
@@ -99,7 +132,13 @@ class Node:
                     return self.Children[7]
 
     @staticmethod
-    def _get_all_voxels_vertex(voxel: [], size: float):  # Протестированно
+    def _get_all_voxels_vertex(voxel: [], size: float):  # Tested
+        """
+        Генерирует все вершины вокселя
+        :param voxel: воксель
+        :param size: размер
+        :return: ленивый список вершин вокселя
+        """
         if size < 0:
             raise Exception("size can't be less than zero")
         for x in range(2):

@@ -2,7 +2,7 @@ from vpython import *
 
 
 def _get_voxel(x, y, z):
-    a = 1  # Длина вокселя
+    a = 0.1  # Длина вокселя
     b = a / 2  # Половина длины вокселя
     c = 0.02  # Толщина ребра
     d = 0.001  # Толщина грани
@@ -50,7 +50,8 @@ def get_model(coords: []):
     Принимает массив вида : [[x, y, z], [x, y, z], ...], где x/y/z/ - координаты вокселя
     Импортировать и вызывать его
     """
-    if len(coords) == 0:
-        raise ValueError("Input array is empty")  # Проверка на пустой массив без данных (если не нужен, можно урать)
+    # TODO временно
+    #if len(coords) == 0:
+        #raise ValueError("Input array is empty")  # Проверка на пустой массив без данных (если не нужен, можно урать)
     for voxel in coords:
         _get_voxel(voxel[0], voxel[1], voxel[2])

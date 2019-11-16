@@ -32,7 +32,7 @@ class TestsMeshToVoxel(unittest.TestCase):
 
     def test_pyramid(self):
         # TODO Ошибка объявления начальных вокселей
-        pyramid = Samples.pyramid()
+        pyramid = Samples.pyramid1()
         model = MV.get_voxel_model(pyramid, [[0, 3], [0, 3], [0, 3]], 0.1)
         Visualization.get_model(model)
 

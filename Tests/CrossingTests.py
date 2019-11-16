@@ -59,12 +59,6 @@ class TestsCheckMeshInVoxel(unittest.TestCase):
         res = Cr._check_mesh_in_voxel(mesh, voxel, 1)
         self.assertFalse(res)
 
-    def test_vertex_voxel_on_vertex_mesh(self):
-        mesh = [[0, 0], [5, 0], [2, 4]]
-        voxel = [5, 0]
-        res = Cr._check_mesh_in_voxel(mesh, voxel, 1)
-        self.assertTrue(res)
-
 
 class TestsCheckVoxelInMesh(unittest.TestCase):
 
@@ -102,12 +96,6 @@ class TestsCheckVoxelInMesh(unittest.TestCase):
         mesh = [[0, 0], [5, 0], [2, 4]]
         voxel = [0, 3]
         res = Cr._check_voxel_in_mesh(mesh, voxel, 4)
-        self.assertFalse(res)
-
-    def test_two_joint_vertex(self):
-        mesh = [[1, 0], [2, 0], [1, 1]]
-        voxel = [0, 0]
-        res = Cr._check_voxel_in_mesh(mesh, voxel, 1)
         self.assertFalse(res)
 
 
@@ -262,6 +250,18 @@ class TestsCheckCrossingProjections(unittest.TestCase):
         mesh = [[0, 0], [0, 5], [5, 0]]
         res = Cr._check_crossing_projections([1, 1], 1, mesh)
         self.assertFalse(res)
+
+    def test_vertex_voxel_on_vertex_mesh(self):
+        mesh = [[0, 0], [5, 0], [2, 4]]
+        voxel = [5, 0]
+        res = Cr._check_crossing_projections(voxel, 1, mesh)
+        self.assertTrue(res)
+
+    def test_two_joint_vertex(self):
+        mesh = [[1, 0], [2, 0], [1, 1]]
+        voxel = [0, 0]
+        res = Cr._check_crossing_projections(voxel, 1, mesh)
+        self.assertTrue(res)
 
 
 class TestsCheckAll(unittest.TestCase):

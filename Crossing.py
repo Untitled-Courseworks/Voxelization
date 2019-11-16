@@ -1,3 +1,6 @@
+import matplotlib.path as mpltPath
+
+
 def crossing(mesh: [], voxel: [], size_voxel: float):
     """
     Проверка, что у меша и вокселя есть общие точки
@@ -9,7 +12,7 @@ def crossing(mesh: [], voxel: [], size_voxel: float):
     # TODO
     #   Предусмотреть, что меш может быть не только треугольной формы
     #   Написать метод, определяюший принадлежность точки к многоугольнику
-    mesh_projections = _get_all_projections(mesh, 3)
+    mesh_projections = _get_all_projections(mesh, len(mesh))
     voxel_projections = _get_all_projections([voxel], 1)
     for i in range(3):
         if not _check_all(mesh_projections[i], voxel_projections[i][0], size_voxel):
@@ -60,14 +63,9 @@ def _check_mesh_in_voxel(mesh_projection: [], voxel_projection: [], size_voxel: 
     :param size_voxel: размер вокселя
     :return: True, если включает в себя, False, если нет
     """
-    # TODO Меш не только треугольный
-    return _point_in_square(voxel_projection, size_voxel, mesh_projection[0]) or \
-           _point_in_square(voxel_projection, size_voxel, mesh_projection[1]) or \
-           _point_in_square(voxel_projection, size_voxel, mesh_projection[2])
-
-
-def _point_in_square(square: [], size_square: float, point: []):
-    return square[0] <= point[0] <= square[0] + size_square and square[1] <= point[1] <= square[1] + size_square
+    voxel = _get_all_vertex_voxel(voxel_projection, size_voxel)
+    inside = _points_in_figure(voxel, mesh_projection)
+    return True in inside
 
 
 def _check_voxel_in_mesh(mesh_projection: [], voxel_projection: [], size_voxel: float):
@@ -78,22 +76,25 @@ def _check_voxel_in_mesh(mesh_projection: [], voxel_projection: [], size_voxel: 
     :param size_voxel: размер вокселя
     :return: True, если включает в себя, False, если нет
     """
-    return _point_in_triangle(voxel_projection, mesh_projection) or \
-           _point_in_triangle([voxel_projection[0], voxel_projection[1] + size_voxel], mesh_projection) or \
-           _point_in_triangle([voxel_projection[0] + size_voxel, voxel_projection[1]], mesh_projection) or \
-           _point_in_triangle([voxel_projection[0] + size_voxel, voxel_projection[1] + size_voxel], mesh_projection)
+    voxel = _get_all_vertex_voxel(voxel_projection, size_voxel)
+    inside = _points_in_figure(mesh_projection, voxel)
+    return True in inside
 
 
-def _point_in_triangle(point: [], triangle: []):
-    a = _det(triangle[0], triangle[1], point)
-    b = _det(triangle[1], triangle[2], point)
-    c = _det(triangle[2], triangle[0], point)
-
-    return (a <= 0 and b <= 0 and c <= 0) or (a > 0 and b > 0 and c > 0)
+def _points_in_figure(figure: [], points: []):
+    path = mpltPath.Path(figure)
+    inside = path.contains_points(points)
+    return inside
 
 
-def _det(p_1: [], p_2: [], p_3: []):
-    return (p_1[0] - p_3[0]) * (p_2[1] - p_1[1]) - (p_2[0] - p_1[0]) * (p_1[1] - p_3[1])
+def _get_all_vertex_voxel(voxel: [], size: float):
+    if size < 0:
+        raise Exception("size can't be less than zero")
+    res = []
+    for x in range(2):
+        for y in range(2):
+            res.append([x * size + voxel[0], y * size + voxel[1]])
+    return res
 
 
 def _check_crossing_projections(voxel_projection: [], size_voxel: float, mesh_projections: []):

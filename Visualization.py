@@ -55,4 +55,3 @@ def get_model(coords: []):
         #raise ValueError("Input array is empty")  # Проверка на пустой массив без данных (если не нужен, можно урать)
     for voxel in coords:
         _get_voxel(voxel[0], voxel[1], voxel[2])
-#213

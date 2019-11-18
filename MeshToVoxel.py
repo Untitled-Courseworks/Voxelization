@@ -16,11 +16,11 @@ def get_voxel_model(model, size_mod, size_voxel):
 
     res = []
     z = size_mod[2][0]
-    while z <= size_mod[2][1]:
+    while z < size_mod[2][1]:
         y = size_mod[1][0]
-        while y <= size_mod[1][1]:
+        while y < size_mod[1][1]:
             x = size_mod[0][0]
-            while x <= size_mod[0][1]:
+            while x < size_mod[0][1]:
                 if octree.check_crossing([x, y, z], size_voxel):
                     yield [x, y, z]
                     #res.append([x, y, z])

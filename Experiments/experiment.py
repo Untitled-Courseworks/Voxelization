@@ -1,5 +1,2 @@
-import PyMesh.python.pymesh as py
-
-
-mesh = py.load_mesh("test.obj", None, True)
-print(1)
+test = [x * y for x in range(2) for y in range(2)]
+print(test)

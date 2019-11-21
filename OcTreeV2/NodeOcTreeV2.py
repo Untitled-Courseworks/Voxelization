@@ -45,6 +45,7 @@ class Node:
         Добавить потомков в вершину
         :return:
         """
+
         def get_coordinate(mask: [], div_size):
             mask = [m * div_size for m in mask]
             return [self.Coordinate[i] + mask[i] for i in range(3)]
@@ -91,28 +92,28 @@ class Node:
         Разбивает объекты в вершине между вершиной и детьми
         :return:
         """
-        try:
-            node_objects = []
-            for ob in self.Objects:
-                object_vertex = ob
-                if is_voxels:
-                    object_vertex = self._get_all_voxels_vertex(ob, size_voxels)
-                location = self.get_location_point(object_vertex[0])
-                if 0 in location:
+        #try:
+        node_objects = []
+        for ob in self.Objects:
+            object_vertex = ob
+            if is_voxels:
+                object_vertex = self._get_all_voxels_vertex(ob, size_voxels)
+            location = self.get_location_point(object_vertex[0])
+            if 0 in location:
+                node_objects.append(ob)
+                continue
+            is_added = False
+            for i in object_vertex:
+                temp_location = self.get_location_point(i)
+                if 0 in temp_location or temp_location != location:
                     node_objects.append(ob)
-                    continue
-                is_added = False
-                for i in object_vertex:
-                    temp_location = self.get_location_point(i)
-                    if 0 in temp_location or temp_location != location:
-                        node_objects.append(ob)
-                        is_added = True
-                        break
-                if not is_added:
-                    self.find_and_get_child(location).Objects.append(ob)
-            self.Objects = node_objects
-        except:
-            raise Exception("error")
+                    is_added = True
+                    break
+            if not is_added:
+                self.find_and_get_child(location).Objects.append(ob)
+        self.Objects = node_objects
+        #except:
+            #raise Exception("error")
 
     @staticmethod
     def _get_all_voxels_vertex(voxel: [], size: float):  # Tested

@@ -3,7 +3,7 @@ from OcTreeV2.NodeOcTreeV2 import Node
 from OcTreeV2.OcTree import Octree
 
 
-def get_simple_node(size = 4):
+def get_simple_node(size=4):
     return Node(None, size, [0, 0, 0])
 
 
@@ -134,8 +134,23 @@ class TestsFillOctree(unittest.TestCase):
         for child in tree.Start.Children:
             self.assertEqual(1, len(child.Objects))
 
+    def test_with_voxels_in_child(self):
+        # TODO
+        #  Работает правильно, но лень настраивать тест
+        voxels = Node._get_all_voxels_vertex([0, 0, 0], 1)
+        v = []
+        for i in voxels:
+            temp = Node._get_all_voxels_vertex(i, 0.5)
+            for t in temp:
+                if 2 not in t:
+                    v.append(t)
+        tree = Octree(v, 0.5, [[0, 4], [0, 4], [0, 4]], True)
+        tree.fill_tree(tree.Start)
+        print(1)
+
     def test_with_512_voxels(self):
-        # TODO fixme
+        # TODO
+        #  Работает правильно, но лень настраивать тест
         voxels = Node._get_all_voxels_vertex([0, 0, 0], 2)
         v = []
         for i in voxels:
@@ -153,7 +168,57 @@ class TestsFillOctree(unittest.TestCase):
             #self.assertEqual(26, len(ch.Objects))
 
 
+class TestsDistribute(unittest.TestCase):
 
+    def test_with_one_vertex_on_bounding_boxes(self):
+        voxel = [[0, 2, 0]]
+        node = get_simple_node()
+        node.add_objects(voxel)
+        node.distribute(True, 1)
+        self.assertEqual(voxel, node.Objects)
+
+    def test_with_one_voxel_in_child(self):
+        voxel = [[3, 0, 3]]
+        node = get_simple_node()
+        node.add_objects(voxel)
+        node.distribute(True, 1)
+        self.assertEqual(node.Children[5].Objects, voxel)
+
+        voxel = [[0, 3, 3]]
+        node.Objects.append(voxel[0])
+        node.distribute(True, 1)
+        self.assertEqual(node.Children[3].Objects, voxel)
+
+    def test_with_8_voxels(self):
+        voxels = Node._get_all_voxels_vertex([0, 0, 0], 3)
+        node = get_simple_node()
+        node.add_objects(voxels)
+        node.distribute(True, 1)
+        for i in node.Children:
+            self.assertEqual(1, len(i.Objects))
+        self.assertEqual(0, len(node.Objects))
+
+    def test_distribute_child(self):
+        voxels = Node._get_all_voxels_vertex([0, 0, 0], 2)
+        v = []
+        for i in voxels:
+            temp = Node._get_all_voxels_vertex(i, 1)
+            for t in temp:
+                v.append(t)
+        voxels = []
+        for i in v:
+            temp = Node._get_all_voxels_vertex(i, 0.5)
+            for t in temp:
+                voxels.append(t)
+        node = get_simple_node(4)
+        node.add_objects(voxels)
+        node.distribute(True, 0.5)
+        for i in node.Children:
+            self.assertEqual(27, len(i.Objects))
+            i.add_children()
+
+
+class
 
 
 if __name__ == '__main':

@@ -18,7 +18,7 @@ class Octree:
         self.Size_voxel = size_voxel
         self.Is_voxels = is_voxels
 
-    def fill_tree(self, node: Node):
+    def fill_tree(self, node: Node):  # Tested
         """
         Заполнение дерева
         :param node: вершина

@@ -1,7 +1,6 @@
 from vpython import *
 
 
-
 def _get_voxel(x, y, z, voxel_size: float):
     b = voxel_size / 2  # Половина длины вокселя
     c = 0.02  # Толщина ребра

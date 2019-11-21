@@ -2,9 +2,16 @@ import Visualization
 import MeshToVoxel as MV
 import unittest
 from Tests import Samples
+import ReadObj
 
 
 class TestsMeshToVoxel(unittest.TestCase):
+
+    def test_1(self):
+        mod = ReadObj.read_file("deer.obj")
+        #file = open("deer.obj")
+
+        Visualization.get_model(mod)
 
     def test_triangle(self):
         triangle = Samples.triangle()
@@ -22,7 +29,9 @@ class TestsMeshToVoxel(unittest.TestCase):
         cube = Samples.cube()
         size_model = Samples.find_size_model(cube)
         voxel_cube = [i for i in MV.get_voxel_model(cube, [[0, 3], [0, 3], [0, 3]], 2)]
-        Visualization.get_model(voxel_cube)
+        #Visualization.get_model(voxel_cube)
+        points = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
+        Visualization.get_model(points)
         #answ = []
         #for z in range(3):
          #   for y in range(3):

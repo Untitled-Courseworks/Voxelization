@@ -19,7 +19,7 @@ ____________________________________________________________
 '''
 
 
-def GetModel(size_voxel: float, voxels_coords: []):
+def _GetModel(voxel_size: float, voxels_coords: []):
     model = (
         [],  # Вершины
         (  # Грани
@@ -47,15 +47,15 @@ def GetModel(size_voxel: float, voxels_coords: []):
     )
 
     for voxel_coords in voxels_coords:
-        model[0].append(GetVoxel(size_voxel, voxel_coords))
+        model[0].append(_GetVoxel(voxel_size, voxel_coords))
 
     return model
 
 
-def GetVoxel(size_voxel: float, voxel: []):
-    x = voxel[0] / size_voxel / 5
-    y = voxel[1] / size_voxel / 5
-    z = voxel[2] / size_voxel / 5
+def _GetVoxel(voxel_size: float, voxel: []):
+    x = voxel[0] / voxel_size / 5
+    y = voxel[1] / voxel_size / 5
+    z = voxel[2] / voxel_size / 5
 
     return (
         (x + 0.1, y - 0.1, z - 0.1),  # правый низ зад
@@ -69,7 +69,7 @@ def GetVoxel(size_voxel: float, voxel: []):
     )
 
 
-def Model(model: [], debug_mode: bool):
+def _Model(model: [], debug_mode: bool):
     for verticies in model[0]:
         glBegin(GL_QUADS)
         glColor3f(1, 0, 0)
@@ -87,9 +87,9 @@ def Model(model: [], debug_mode: bool):
             glEnd()
 
 
-def ShowModel(voxels_coords: [], size_voxel: float, debug_mode: bool):
+def ShowModel(voxels_coords: [], voxel_size: float, debug_mode: bool):
 
-    model = GetModel(size_voxel, voxels_coords)
+    model = _GetModel(voxel_size, voxels_coords)
 
     pygame.init()
     display = (800, 600)  # Размер окна
@@ -176,6 +176,6 @@ def ShowModel(voxels_coords: [], size_voxel: float, debug_mode: bool):
         glRotatef(step, y_rotate, x_rotate, z_rotate)  # Изменение ориентации
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        Model(model, debug_mode)
+        _Model(model, debug_mode)
         pygame.display.flip()
         pygame.time.wait(10)

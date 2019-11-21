@@ -1,16 +1,15 @@
 from vpython import *
 
 
-def _get_voxel(x, y, z):
-    a = 1  # Длина вокселя !!!НЕ ИЗМЕНЯТЬ!!
-    b = a / 2  # Половина длины вокселя
+def _get_voxel(x, y, z, voxel_size: float):
+    b = voxel_size / 2  # Половина длины вокселя
     c = 0.02  # Толщина ребра
     d = 0.001  # Толщина грани
-    _get_verges(a, b, c, d, x, y, z)
-    _get_borders(a, b, c, x, y, z)
+    _get_verges(voxel_size, b, c, d, x, y, z)
+    _get_borders(voxel_size, b, c, x, y, z)
 
 
-def _get_verges(a, b, c, d, x, y, z):
+def _get_verges(voxel_size, b, c, d, x, y, z):
     """
     pos - позиция, задается => vec(x, y, z), где x/y/z - любое число
     size - размер (в нашем случае он не важен, т.к. все воксели одинаковые)
@@ -19,7 +18,7 @@ def _get_verges(a, b, c, d, x, y, z):
     emissive - Игнорирование источников света (True - игнор., False - не игнор.(по умол.))
     """
     m = (b - 0.5 * d)  # Сдвиг грани от центра вокселя
-    p = (a - 2 * c)  # Длина грани между ребрами
+    p = (voxel_size - 2 * c)  # Длина грани между ребрами
     box(pos=vec(x, y, z + m), size=vec(p, p, d), color=color.green, shininess=0, emissive=True)  # front(x, y)
     box(pos=vec(x, y, z - m), size=vec(p, p, d), color=color.green, shininess=0, emissive=True)  # back(x, y)
     box(pos=vec(x - m, y, z), size=vec(d, p, p), color=color.green, shininess=0, emissive=True)  # left(y, z)
@@ -44,7 +43,7 @@ def _get_borders(a, b, c, x, y, z):
     box(pos=vec(x + n, y + n, z), size=vec(c, c, a), color=color.red, shininess=0, emissive=True)  # право верх
 
 
-def get_model(coords: []):
+def get_model(coords: [], voxel_size: float):
     """
     Метод, визуализирующий воксели.
     Принимает массив вида : [[x, y, z], [x, y, z], ...], где x/y/z/ - координаты вокселя
@@ -54,4 +53,4 @@ def get_model(coords: []):
     #if len(coords) == 0:
         #raise ValueError("Input array is empty")  # Проверка на пустой массив без данных (если не нужен, можно урать)
     for voxel in coords:
-        _get_voxel(voxel[0], voxel[1], voxel[2])
+        _get_voxel(voxel[0], voxel[1], voxel[2], voxel_size)

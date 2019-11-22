@@ -7,15 +7,16 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 
 '''
-Импортировать метод ShowModel - Принимает 3 аргумента: 
+Импортировать метод ShowModel - Принимает 4 аргумента: 
             1 - массив с координатама (x, y, z) вокселей
             2 - размер вокселя
-            3 - debug_mod (True/False)
+            3 - крайние координаты объекта в виде ->  ((Xmin, Ymin, Zmin), (Xmax, Ymax, Zmax))
+            4 - debug_mod (True/False)
 ____________________________________________________________
 Приоритеты в планах:
     - Добавить цвет
     - Переработать debug_mode
-    - Доделать полноценное перемещение
+    - Доделать полноценное перемещение (На данный момент: вращение только по одной оси и зум)
 '''
 
 
@@ -87,7 +88,27 @@ def _Model(model: [], debug_mode: bool):
             glEnd()
 
 
-def ShowModel(voxels_coords: [], voxel_size: float, debug_mode: bool):
+def _ModelCentering(voxels_coords: [], extreme_coordinates: ()):
+    """
+    :param extreme_coordinates:  в виде  ->  ((Xmin, Ymin, Zmin), (Xmax, Ymax, Zmax))
+    :return: ()
+    """
+    dif_x = extreme_coordinates[1][0] - extreme_coordinates[0][0]
+    dif_y = extreme_coordinates[1][1] - extreme_coordinates[0][1]
+    dif_z = extreme_coordinates[1][2] - extreme_coordinates[0][2]
+
+    for voxel_coords in voxels_coords:
+        voxel_coords[0] = voxel_coords[0] - extreme_coordinates[0][0] - (dif_x / 2)
+        voxel_coords[1] = voxel_coords[1] - extreme_coordinates[0][1] - (dif_y / 2)
+        voxel_coords[2] = voxel_coords[2] - extreme_coordinates[0][2] - (dif_z / 2)
+
+    max_half = max(dif_x, dif_y, dif_z) / 2
+    return (max_half * 1.3, max_half * 10)
+
+
+def ShowModel(voxels_coords: [], voxel_size: float, extreme_coordinates: (), debug_mode: bool):
+
+    perspective = _ModelCentering(voxels_coords, extreme_coordinates)
 
     model = _GetModel(voxel_size, voxels_coords)
 
@@ -97,9 +118,9 @@ def ShowModel(voxels_coords: [], voxel_size: float, debug_mode: bool):
 
     pygame.display.set_caption("Result")  # Название окна
 
-    gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
+    gluPerspective(45, (display[0] / display[1]), 0.1, perspective[1])
 
-    glTranslatef(0, 0, -2)
+    glTranslatef(0, 0, -perspective[0])
 
     glRotatef(0, 0, 0, 0)
 

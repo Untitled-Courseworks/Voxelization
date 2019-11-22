@@ -1,90 +1,33 @@
-import math
-#Временно
-import Visualization
+
+import OcTree.CreateOcTree as Octree
 
 
-class Mesh:
-    # Временно
-    def __init__(self, normal: [], v1: [], v2: [], v3: []):
-        self.Normal = normal
-        self.V1 = v1
-        self.V2 = v2
-        self.V3 = v3
-
-
-def return_sample_pyramid():
-    # Временно
+def get_voxel_model(model, size_mod, size_voxel):
     """
-    Пример простой пирамиды с треугольным основанием
-    :return: Список меши пирамиды с треугольным основанием
+
+    :param model:
+    :param size_mod: [[min_x, max_x], [min_y, max_y], [min_z, max_z]]
+    :param size_voxel:
+    :return:
     """
-    return [Mesh([0, -9, 0], [0, 0, 3], [0, 0, 0], [3, 0, 3]),
-            Mesh([9, 0, 0], [0, 0, 3], [0, 0, 0], [0, 3, 0]),
-            Mesh([0, 9, 9], [0, 0, 3], [3, 0, 3], [0, 3, 0]),
-            Mesh([-9, 0, 9], [0, 0, 0], [3, 0, 3], [0, 3, 0])]
 
+    octree = Octree.get_octree(model, size_mod, size_voxel)
 
-def return_sample_cube():
-    # Временно
-    """
-    Пример куба с длиной граней 3
-    :return: Список мешей куба
-    """
-    return [
-        Mesh([], [0, 3, 3], [3, 3, 3], [3, 0, 3]),
-        Mesh([], [0, 3, 3], [0, 0, 3], [3, 0, 3]),
-
-        Mesh([], [0, 3, 3], [0, 0, 3], [0, 0, 0]),
-        Mesh([], [0, 3, 3], [0, 3, 0], [0, 0, 0]),
-
-        Mesh([], [0, 3, 3], [3, 3, 3], [0, 3, 0]),
-        Mesh([], [0, 3, 3], [3, 3, 0], [0, 3, 0]),
-
-        Mesh([], [3, 0, 3], [0, 0, 3], [3, 3, 3]),
-        Mesh([], [3, 0, 3], [3, 0, 0], [3, 3, 3]),
-
-        Mesh([], [3, 3, 3], [3, 0, 3], [3, 0, 0]),
-        Mesh([], [3, 3, 3], [3, 3, 0], [3, 0, 0]),
-
-        Mesh([], [0, 3, 0], [3, 3, 0], [3, 0, 0]),
-        Mesh([], [0, 3, 0], [0, 0, 0], [3, 0, 0]),
-    ]
-
-
-def find_size_model(model: []):
-    # Временно
-    """
-    Рассчитывает размеры модели по крайним точкам
-    :param model: Меши модели
-    :return: возвращает размеры в формате [x, y, z]
-    """
-    min = [math.inf, math.inf, math.inf]
-    max = [0, 0, 0]
-
-    for v in model:
-        for i in range(3):
-            compare(min, max, v.V1, i)
-            compare(min, max, v.V2, i)
-            compare(min, max, v.V3, i)
-
-    return [max[i] - min[i] for i in range(3)]
-
-
-def compare(min: [], max: [], vertex: [], i: int):
-    # Временно
-    if min[i] > vertex[i]:
-        min[i] = vertex[i]
-    if max[i] < vertex[i]:
-        max[i] = vertex[i]
-
-
-def get_voxel_model(model, size_mod):
     res = []
-    for z in range(math.ceil(size_mod[2] / size)):
-        for y in range(math.ceil(size_mod[1] / size)):
-            for x in range(math.ceil(size_mod[0] / size)):
-                if is_voxel([x, y, z], model, size):
-                    res.append([x, y, z])
+    z = size_mod[2][0]
+    while z <= size_mod[2][1]:
+        y = size_mod[1][0]
+        while y <= size_mod[1][1]:
+            x = size_mod[0][0]
+            while x <= size_mod[0][1]:
+                if octree.check_crossing([x, y, z], size_voxel):
+                    yield [x, y, z]
+                    #res.append([x, y, z])
+                    # TODO Временно
+                    #print([x, y, z])
+                x += size_voxel
+            y += size_voxel
+        z += size_voxel
     return res
 
 
@@ -164,15 +107,3 @@ def check_crossing_lines(ver_1: [], ver_2: [], voxel_1: [], voxel_2: []):
 def det(ver_1: [], ver_2: []):
     return ver_1[0] * ver_2[1] - ver_2[0] * ver_1[1]
 
-
-# Временно
-size = 1
-model = return_sample_cube()
-size_mod = find_size_model(model)
-voxels = get_voxel_model(model, size_mod)
-#Visualization.get_model(voxels)
-#print(len(voxels))
-
-#print(check_crossing_lines([2, 0], [4, 0], [1, 0], [3, 0]))
-
-print(input(60))

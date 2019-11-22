@@ -1,4 +1,6 @@
 import math
+#Временно
+import Visualization
 
 
 class Mesh:
@@ -100,6 +102,7 @@ def is_voxel(voxel: [], model: [], size_voxel: float):
 def check_all_projection(voxel: [], size_voxel: float, ver_1: [], ver_2: []):
     # TODO
     #  Нет проверки, когда меш полностью внутри проекции
+    #  Нет проверки, когда воксель полностью внутри меша
     return check_crossing_projection([voxel[0], voxel[1]], size_voxel, ver_1, ver_2) and \
            check_crossing_projection([voxel[1], voxel[2]], size_voxel, ver_1, ver_2) and \
            check_crossing_projection([voxel[0], voxel[2]], size_voxel, ver_1, ver_2)
@@ -167,6 +170,9 @@ size = 1
 model = return_sample_cube()
 size_mod = find_size_model(model)
 voxels = get_voxel_model(model, size_mod)
-print(len(voxels))
+#Visualization.get_model(voxels)
+#print(len(voxels))
 
 #print(check_crossing_lines([2, 0], [4, 0], [1, 0], [3, 0]))
+
+print(input(60))

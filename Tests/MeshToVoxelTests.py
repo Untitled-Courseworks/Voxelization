@@ -30,8 +30,8 @@ class TestsMeshToVoxel(unittest.TestCase):
         cube = Samples.cube()
         size_model = Samples.find_size_model(cube)
         voxel_cube = [i for i in MV.get_voxel_model(cube, [[0, 3], [0, 3], [0, 3]], 0.1)]
+        ShowModel(voxel_cube, 0.1, [[0, 0, 0], [3, 3, 3]], True)
         #self.print_in_file(voxel_cube)
-        ShowModel(voxel_cube, 1, True)
         #Visualization.get_model(voxel_cube, 0.1)
         #points = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
         #Visualization.get_model(points)

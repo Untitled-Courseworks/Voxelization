@@ -88,7 +88,7 @@ def _Model(model: [], debug_mode: bool):
             glEnd()
 
 
-def _ModelCentering(voxels_coords: [], extreme_coordinates: ()):
+def _ModelCentering(voxels_coords: [], extreme_coordinates: (), voxel_size: float):
     """
     :param extreme_coordinates:  в виде  ->  ((Xmin, Ymin, Zmin), (Xmax, Ymax, Zmax))
     :return: ()
@@ -102,7 +102,7 @@ def _ModelCentering(voxels_coords: [], extreme_coordinates: ()):
         voxel_coords[1] = voxel_coords[1] - extreme_coordinates[0][1] - (dif_y / 2)
         voxel_coords[2] = voxel_coords[2] - extreme_coordinates[0][2] - (dif_z / 2)
 
-    max_half = max(dif_x, dif_y, dif_z) / 2
+    max_half = max(dif_x, dif_y, dif_z) / 2 / voxel_size
     return (max_half * 1.3, max_half * 10)
 
 
@@ -111,8 +111,7 @@ def ShowModel(voxels_coords: [], voxel_size: float, extreme_coordinates: (), deb
     :param extreme_coordinates:  в виде  ->  ((Xmin, Ymin, Zmin), (Xmax, Ymax, Zmax))
     :return: ()
     """
-    perspective = _ModelCentering(voxels_coords, extreme_coordinates)
-
+    perspective = _ModelCentering(voxels_coords, extreme_coordinates, voxel_size)
     model = _GetModel(voxel_size, voxels_coords)
 
     pygame.init()

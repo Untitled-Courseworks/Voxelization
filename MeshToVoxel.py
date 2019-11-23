@@ -9,6 +9,7 @@ def get_voxel_model(model, size_mod, size_voxel):
     :param size_voxel:
     :return:
     """
+    # TODO Прикрепить новую структуру Octree
 
     octree = Octree.get_octree(model, size_mod, size_voxel)
 

@@ -92,7 +92,7 @@ class Octree:
         """
         Генерирует все вершины вокселя
         :param voxel: воксель
-        :param size: размер
+        :param size: размер вокселя
         :return: ленивый список вершин вокселя
         """
         if size < 0:

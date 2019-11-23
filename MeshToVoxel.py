@@ -1,4 +1,4 @@
-import OcTree.CreateOcTree as Octree
+from OcTreeV2.OcTree import Octree
 
 
 def get_voxel_model(model, size_mod, size_voxel):
@@ -9,20 +9,12 @@ def get_voxel_model(model, size_mod, size_voxel):
     :param size_voxel:
     :return:
     """
-    # TODO Прикрепить новую структуру Octree
-
-    octree = Octree.get_octree(model, size_mod, size_voxel)
-
-    res = []
-    z = size_mod[2][0]
-    while z < size_mod[2][1]:
-        y = size_mod[1][0]
-        while y < size_mod[1][1]:
-            x = size_mod[0][0]
-            while x < size_mod[0][1]:
-                if octree.check_crossing([x, y, z], size_voxel):
-                    yield [x, y, z]
-                x += size_voxel
-            y += size_voxel
-        z += size_voxel
-    return res
+    max_size_model = max(*[i[1] - i[0] for i in size_mod])
+    start_pos = [i[0] for i in size_mod]
+    voxels = Octree.get_all_voxels(start_pos, size_voxel, max_size_model)
+    tree = Octree(voxels, size_voxel, size_mod, True)
+    tree.fill_tree()
+    for mesh in model:
+        temp = tree.get_all_crossing(mesh, tree.Start)
+        for i in temp:
+            yield i

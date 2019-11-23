@@ -3,7 +3,7 @@ import MeshToVoxel as MV
 import unittest
 from Tests import Samples
 import ReadObj
-from Visual import ShowModel
+from Visual_2_0 import ShowModel
 
 
 class TestsMeshToVoxel(unittest.TestCase):
@@ -29,12 +29,12 @@ class TestsMeshToVoxel(unittest.TestCase):
         # TODO Неверный пример куба
         cube = Samples.cube()
         size_model = Samples.find_size_model(cube)
-        voxel_cube = [i for i in MV.get_voxel_model(cube, [[0, 3], [0, 3], [0, 3]], 0.1)]
-        ShowModel(voxel_cube, 0.1, [[0, 0, 0], [3, 3, 3]], True)
+        voxel_cube = [i for i in MV.get_voxel_model(cube, [[0, 3], [0, 3], [0, 3]], 2)]
+        ShowModel(voxel_cube, 2, [[0, 0, 0], [3, 3, 3]], False)
         #self.print_in_file(voxel_cube)
         #Visualization.get_model(voxel_cube, 0.1)
-        #points = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
-        #Visualization.get_model(points)
+        #objects = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
+        #Visualization.get_model(objects)
         #answ = []
         #for z in range(3):
          #   for y in range(3):

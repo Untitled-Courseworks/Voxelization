@@ -140,7 +140,7 @@ class Node:
         :return: ленивый список вершин вокселя
         """
         if size < 0:
-            raise Exception("size can't be less than zero")
+            raise Exception("size_voxel can't be less than zero")
         for x in range(2):
             for y in range(2):
                 for z in range(2):

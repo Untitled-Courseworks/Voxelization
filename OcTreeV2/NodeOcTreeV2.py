@@ -92,7 +92,6 @@ class Node:
         Разбивает объекты в вершине между вершиной и детьми
         :return:
         """
-        #try:
         node_objects = []
         for ob in self.Objects:
             object_vertex = ob
@@ -112,8 +111,6 @@ class Node:
             if not is_added:
                 self.find_and_get_child(location).Objects.append(ob)
         self.Objects = node_objects
-        #except:
-            #raise Exception("error")
 
     @staticmethod
     def _get_all_voxels_vertex(voxel: [], size: float):  # Tested
@@ -124,7 +121,7 @@ class Node:
         :return: ленивый список вершин вокселя
         """
         if size < 0:
-            raise Exception("size can't be less than zero")
+            raise Exception("size_voxel can't be less than zero")
         res = []
         for x in range(2):
             for y in range(2):

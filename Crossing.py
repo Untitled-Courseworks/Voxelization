@@ -88,7 +88,7 @@ def _points_in_figure(figure: [], points: []):
 
 def _get_all_vertex_voxel(voxel: [], size: float):
     if size < 0:
-        raise Exception("size can't be less than zero")
+        raise Exception("size_voxel can't be less than zero")
     res = []
     for x in range(2):
         for y in range(2):

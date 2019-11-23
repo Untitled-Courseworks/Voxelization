@@ -9,4 +9,13 @@ def convert_base(num, to_base=10, from_base=10):
     else:
         return convert_base(n // to_base, to_base) + alphabet[n % to_base]
 
-print(convert_base("1", to_base=2, from_base=10))
+
+def is_polyndrom(n: int) -> int:
+    for base in range(2, 37):
+        num = convert_base(str(n), base, 10)
+        if num == num[::-1]:
+            return base
+    return 0
+
+
+print(is_polyndrom(99998))

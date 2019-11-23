@@ -3,6 +3,7 @@ import MeshToVoxel as MV
 import unittest
 from Tests import Samples
 import ReadObj
+from Visual import ShowModel
 
 
 class TestsMeshToVoxel(unittest.TestCase):
@@ -28,10 +29,12 @@ class TestsMeshToVoxel(unittest.TestCase):
         # TODO Неверный пример куба
         cube = Samples.cube()
         size_model = Samples.find_size_model(cube)
-        voxel_cube = [i for i in MV.get_voxel_model(cube, [[0, 3], [0, 3], [0, 3]], 2)]
-        #Visualization.get_model(voxel_cube)
-        points = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
-        Visualization.get_model(points)
+        voxel_cube = [i for i in MV.get_voxel_model(cube, [[0, 3], [0, 3], [0, 3]], 0.1)]
+        #self.print_in_file(voxel_cube)
+        ShowModel(voxel_cube, 1, True)
+        #Visualization.get_model(voxel_cube, 0.1)
+        #points = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
+        #Visualization.get_model(points)
         #answ = []
         #for z in range(3):
          #   for y in range(3):
@@ -44,7 +47,21 @@ class TestsMeshToVoxel(unittest.TestCase):
         # TODO Ошибка объявления начальных вокселей
         pyramid = Samples.pyramid2()
         model = [i for i in MV.get_voxel_model(pyramid, [[0, 4], [0, 4], [0, 4]], 0.1)]
-        Visualization.get_model(model)
+        self.print_in_file(model)
+        #Visualization.get_model(model)
+        #ShowModel(model, 0.1, True)
+
+    def print_in_file(self, voxels: []):
+        with open("Voxels.txt", "w") as file:
+            file.write("[")
+            for i in voxels:
+                file.write("[")
+                file.write(str(i[0]) + ", ")
+                file.write(str(i[1]) + ", ")
+                file.write(str(i[2]))
+                file.write("],")
+                file.write("\n")
+            file.write("]")
 
 
 if __name__ == '__main__':

@@ -218,7 +218,6 @@ class TestsDistribute(unittest.TestCase):
             i.add_children()
 
 
-class
 
 
 if __name__ == '__main':

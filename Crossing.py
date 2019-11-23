@@ -1,6 +1,5 @@
 import matplotlib.path as mpltPath
 
-
 def crossing(mesh: [], voxel: [], size_voxel: float):
     """
     Проверка, что у меша и вокселя есть общие точки

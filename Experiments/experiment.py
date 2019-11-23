@@ -1,20 +1,12 @@
-from OcTreeV2.NodeOcTreeV2 import Node
+def convert_base(num, to_base=10, from_base=10):
+    if isinstance(num, str):
+        n = int(num, from_base)
+    else:
+        n = int(num)
+    alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    if n < to_base:
+        return alphabet[n]
+    else:
+        return convert_base(n // to_base, to_base) + alphabet[n % to_base]
 
-voxels = Node._get_all_voxels_vertex([0, 0, 0], 2)
-v = []
-for i in voxels:
-    temp = Node._get_all_voxels_vertex(i, 1)
-    for t in temp:
-        v.append(t)
-voxels = []
-for i in v:
-    temp = Node._get_all_voxels_vertex(i, 0.5)
-    for t in temp:
-        voxels.append(t)
-
-search = []
-count = 0
-for i in voxels:
-    if 2 in i or 2 in [j + 0.5 for j in i]:
-        count += 1
-print(count)
+print(convert_base("1", to_base=2, from_base=10))

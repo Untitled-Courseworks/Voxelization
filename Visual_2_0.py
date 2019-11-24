@@ -29,21 +29,21 @@ def _GetModel(voxel_size: float, voxels_coords: []):
             (0, 4),
             (2, 1),
             (2, 3),
-            (2, 7),
-            (6, 3),
-            (6, 4),
-            (6, 7),
+            (2, 6),
+            (7, 3),
+            (7, 4),
+            (7, 6),
             (5, 1),
             (5, 4),
-            (5, 7)
+            (5, 6)
         ),
         (  # Поверхности
             (0, 1, 2, 3),
-            (3, 2, 7, 6),
-            (6, 7, 5, 4),
+            (3, 2, 6, 7),
+            (7, 6, 5, 4),
             (4, 5, 1, 0),
-            (1, 5, 7, 2),
-            (4, 0, 3, 6)
+            (1, 5, 6, 2),
+            (4, 0, 3, 7)
         )
     )
 
@@ -65,15 +65,15 @@ def _GetVoxel(voxel_size: float, voxel: []):
         (x - 0.1, y - 0.1, z - 0.1),  # левый низ зад
         (x + 0.1, y - 0.1, z + 0.1),  # правый низ перед
         (x + 0.1, y + 0.1, z + 0.1),  # правый верх перед
-        (x - 0.1, y - 0.1, z + 0.1),  # левый низ перед
-        (x - 0.1, y + 0.1, z + 0.1)  # левый верх перед
+        (x - 0.1, y + 0.1, z + 0.1),  # левый верх перед
+        (x - 0.1, y - 0.1, z + 0.1)  # левый низ перед
     )
 
 
 def _Model(model: [], debug_mode: bool):
     for verticies in model[0]:
         glBegin(GL_QUADS)
-        glColor3f(1, 0, 0)
+        glColor3ub(255, 0, 0)
         for surface in model[2]:
             for vertex in surface:
                 glVertex3fv(verticies[vertex])
@@ -83,7 +83,7 @@ def _Model(model: [], debug_mode: bool):
             glBegin(GL_LINES)  # Отображение границ
             for edge in model[1]:
                 for vertex in edge:
-                    glColor3f(1, 1, 0)
+                    glColor3ub(255, 255, 0)
                     glVertex3fv(verticies[vertex])
             glEnd()
 
@@ -93,14 +93,14 @@ def _ModelCentering(voxels_coords: [], extreme_coordinates: (), voxel_size: floa
     :param extreme_coordinates:  в виде  ->  ((Xmin, Ymin, Zmin), (Xmax, Ymax, Zmax))
     :return: ()
     """
-    dif_x = extreme_coordinates[1][0] - extreme_coordinates[0][0]
-    dif_y = extreme_coordinates[1][1] - extreme_coordinates[0][1]
-    dif_z = extreme_coordinates[1][2] - extreme_coordinates[0][2]
+    dif_x = extreme_coordinates[1][0] - extreme_coordinates[0][0] + voxel_size
+    dif_y = extreme_coordinates[1][1] - extreme_coordinates[0][1] + voxel_size
+    dif_z = extreme_coordinates[1][2] - extreme_coordinates[0][2] + voxel_size
 
     for voxel_coords in voxels_coords:
-        voxel_coords[0] = voxel_coords[0] - extreme_coordinates[0][0] - (dif_x / 2)
-        voxel_coords[1] = voxel_coords[1] - extreme_coordinates[0][1] - (dif_y / 2)
-        voxel_coords[2] = voxel_coords[2] - extreme_coordinates[0][2] - (dif_z / 2)
+        voxel_coords[0] = voxel_coords[0] - extreme_coordinates[0][0] + voxel_size / 2 - (dif_x / 2)
+        voxel_coords[1] = voxel_coords[1] - extreme_coordinates[0][1] + voxel_size / 2 - (dif_y / 2)
+        voxel_coords[2] = voxel_coords[2] - extreme_coordinates[0][2] + voxel_size / 2 - (dif_z / 2)
 
     max_half = max(dif_x, dif_y, dif_z) / 2 / voxel_size
     return (max_half * 1.3, max_half * 10)

@@ -1,48 +1,20 @@
-import matplotlib.pyplot as plt
-from sympy import Line, Point, Segment
-import numpy as np
+class SquareEquationException(Exception):
+    pass
 
 
-def crossing(p1: Point, p2: Point, p3: Point, p4: Point):
-    line1, seg1 = Line(p1, p2), Segment(p1, p2)
-    line2, seg2 = Line(p3, p4), Segment(p3, p4)
-    intersect = line1.intersection(line2)
-    if intersect:
-        seg1 = Segment(p1, p2)
-        seg2 = Segment(p3, p4)
-        pi = intersect[0]
-        return seg1.contains(pi) and seg2.contains(pi)
+def solve_square_equation(expr: str)-> list:
+    pass
 
 
-print(crossing(Point(0, 1), Point(2, 0), Point(0, 4), Point(2, 0)))
+def read_equation(equation: str):
+    temp = equation.split("*x")
+    if len(temp) != 3 or temp[1][0:2:] != "^2" or (temp[1][2] != "+" or "-"):
+        raise SquareEquationException()
+    temp[1] = temp[1][2::]
+    res = [float(i) for i in temp]
+    return res
 
-x1, y1 = [0, 1], [-1, 0]
-x2, y2 = [0, 4], [2, 0]
 
-# объекты точек
-p1, p2, p3, p4 = (Point(x1[0], y1[0]), Point(x1[1], y1[1]),
-                  Point(x2[0], y2[0]), Point(x2[1], y2[1]))
+print(read_equation("2223333"))
 
-# объекты прямых для установления факта пересечения
-# объекты отрезков для проверки наличия точки пересечения уже на отрезке
-line1, seg1 = Line(p1, p2), Segment(p1, p2)
-line2, seg2 = Line(p3, p4), Segment(p3, p4)
-
-intersect = line1.intersection(line2)
-print(intersect)
-
-l1, = plt.plot(x1, y1, marker='o', zorder=3)
-l2, = plt.plot(x2, y2, marker='o', zorder=3)
-
-if intersect:
-    pi = intersect[0]
-    if not seg1.contains(pi):
-        xydata = l1.get_xydata()
-        xydata = np.vstack((xydata, [pi.x, pi.y]))
-        plt.plot(xydata[:, 0], xydata[:, 1], '--', alpha=.5)
-
-    if not seg2.contains(pi):
-        xydata = l2.get_xydata()
-        xydata = np.vstack((xydata, [pi.x, pi.y]))
-        plt.plot(xydata[:, 0], xydata[:, 1], '--', alpha=.5)
-plt.show()
+print(read_equation("-02.5*x^24-1.5*x+3"))

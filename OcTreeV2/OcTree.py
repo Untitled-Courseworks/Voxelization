@@ -4,7 +4,7 @@ import Crossing
 
 class Octree:
 
-    def __init__(self, objects: [], size_voxel: [], ep: [], is_voxels=False):
+    def __init__(self, objects: [], size_voxel: [], ep: []):
         """
 
         :param objects: объекты для хранения в дереве
@@ -16,7 +16,6 @@ class Octree:
         self.Start = Node(None, max_size_model, [point[0] for point in ep])
         self.Start.add_objects(objects)
         self.Size_voxel = size_voxel
-        self.Is_voxels = is_voxels
 
     def fill_tree(self):
         self._fill_tree(self.Start)
@@ -27,29 +26,14 @@ class Octree:
         :param node: вершина
         :return:
         """
-        if node.Size <= self.Size_voxel or str(type(node.Objects)) == "<class 'generator'>" or len(node.Objects) <= 1:
+        # TODO Проверить условие на корректность
+        if node.Size_node <= self.Size_voxel or str(type(node.Voxels)) == "<class 'generator'>" or len(node.Voxels) <= 1:
             return
         if len(node.Children) == 0:
             node.add_children()
-        node.distribute(self.Is_voxels, self.Size_voxel)
+        node.distribute(self.Size_voxel)
         for child in node.Children:
             self._fill_tree(child)
-
-    def get_first_crossing(self, object_checked, node: Node):
-        """
-        Предназначена для возвращения первого персечения с мешем, когда меши в дереве
-        :param object_checked: воксель
-        :param node: проверяемая вершина, для начала поиска указать стартовую
-        :return:
-        """
-        for ob in node.Objects:
-            if Crossing.crossing(ob, object_checked, self.Size_voxel):
-                return ob
-        if len(node.Children) > 0:
-            for child in self._get_children_for_checked(self._get_all_voxels_vertex(object_checked, self.Size_voxel), node):
-                temp = self.get_first_crossing(object_checked, child)
-                if temp is not None:
-                    return temp
 
     def get_all_crossing(self, object_checked, node: Node):  # Tested
         """
@@ -58,13 +42,14 @@ class Octree:
         :param node: проверяемая вершина. Для начала поиска указать стартовую
         :return:
         """
+        # TODO Сделать цикл, вместо рекурсии
         not_crossing = []
-        for ob in node.Objects:
+        for ob in node.Voxels:
             if Crossing.crossing(object_checked, ob, self.Size_voxel):
                 yield ob
             else:
                 not_crossing.append(ob)
-        node.Objects = not_crossing
+        node.Voxels = not_crossing
         if len(node.Children) > 0:
             for child in self._get_children_for_checked(object_checked, node):
                 temp = self.get_all_crossing(object_checked, child)

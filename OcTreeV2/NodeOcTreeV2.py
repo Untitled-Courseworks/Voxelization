@@ -1,17 +1,18 @@
 class Node:
 
-    def __init__(self, parent, size, coordinate: []):
+    def __init__(self, parent, size_node, coordinate_node: []):
         """
         :param parent: предок вершины
-        :param size: размер вершины
-        :param coordinate: координаты вершины
+        :param size_node: размер вершины
+        :param coordinate_node: координаты вершины
         """
         self.Parent = parent
-        self.Size = size
-        self.Coordinate = coordinate
-        div_size = self.Size / 2
-        self.BoundingBox = [self.Coordinate[2] + div_size, self.Coordinate[1] + div_size, self.Coordinate[0] + div_size]
-        self.Objects = []
+        self.Size_node = size_node
+        self.Coordinate_node = coordinate_node
+        div_size = self.Size_node / 2
+        self.SeparatingPlanes = [self.Coordinate_node[2] + div_size, self.Coordinate_node[1] + div_size,
+                                 self.Coordinate_node[0] + div_size]
+        self.Voxels = []
         self.Children = []
 
     def add_objects(self, objects: []):
@@ -21,7 +22,7 @@ class Node:
         :return:
         """
         self.add_children()
-        self.Objects = objects
+        self.Voxels = objects
 
     def get_location_point(self, point: []):  # Tested
         """
@@ -32,12 +33,10 @@ class Node:
         """
         res = []
         for area in range(3):
-            if abs(self.BoundingBox[area] > abs(point[area])):
+            if abs(self.SeparatingPlanes[area] > abs(point[area])):
                 res.append(-1)
-            elif abs(self.BoundingBox[area] < abs(point[area])):
+            elif abs(self.SeparatingPlanes[area] < abs(point[area])):
                 res.append(1)
-            else:
-                res.append(0)
         return res
 
     def add_children(self):  # Tested
@@ -48,9 +47,9 @@ class Node:
 
         def get_coordinate(mask: [], div_size):
             mask = [m * div_size for m in mask]
-            return [self.Coordinate[i] + mask[i] for i in range(3)]
+            return [self.Coordinate_node[i] + mask[i] for i in range(3)]
 
-        div_size = self.Size / 2
+        div_size = self.Size_node / 2
         self.Children = [Node(self, div_size, get_coordinate([x, y, z], div_size))
                          for x in range(2) for y in range(2) for z in range(2)]
 
@@ -87,30 +86,27 @@ class Node:
                 else:
                     return self.Children[0]
 
-    def distribute(self, is_voxels=False, size_voxels=0):
+    def distribute(self, size_voxels=0):
         """
-        Разбивает объекты в вершине между вершиной и детьми
+        Разбивает объекты в вершине между детьми
         :return:
         """
-        node_objects = []
-        for ob in self.Objects:
-            object_vertex = ob
-            if is_voxels:
-                object_vertex = self._get_all_voxels_vertex(ob, size_voxels)
-            location = self.get_location_point(object_vertex[0])
-            if 0 in location:
-                node_objects.append(ob)
-                continue
-            is_added = False
-            for i in object_vertex:
-                temp_location = self.get_location_point(i)
-                if 0 in temp_location or temp_location != location:
-                    node_objects.append(ob)
-                    is_added = True
-                    break
-            if not is_added:
-                self.find_and_get_child(location).Objects.append(ob)
-        self.Objects = node_objects
+        # TODO Протестировать
+
+        for voxel in self.Voxels:
+            added_locations = []
+            voxel_vertex = self._get_all_voxels_vertex(voxel, size_voxels)
+            location_first_vertex = self.get_location_point(voxel_vertex[0])
+            self.find_and_get_child(location_first_vertex).Voxels.append(voxel)
+            added_locations.append(location_first_vertex)
+
+            for i in voxel_vertex:
+                location_vertex = self.get_location_point(i)
+                if location_vertex != location_first_vertex and location_vertex not in added_locations:
+                    self.find_and_get_child(location_vertex).Voxels.append(voxel)
+                    added_locations.append(location_vertex)
+
+        self.Voxels = []
 
     @staticmethod
     def _get_all_voxels_vertex(voxel: [], size: float):  # Tested

@@ -1,5 +1,6 @@
 import matplotlib.path as mpltPath
 
+
 def crossing(mesh: [], voxel: [], size_voxel: float):
     """
     Проверка, что у меша и вокселя есть общие точки
@@ -11,6 +12,7 @@ def crossing(mesh: [], voxel: [], size_voxel: float):
     # TODO
     #   Предусмотреть, что меш может быть не только треугольной формы
     #   Написать метод, определяюший принадлежность точки к многоугольнику
+    #   Исправить: если меш и воксель пересекаются в одной точке - считать как за НЕПЕРЕСЕЧЕНИЕ
     mesh_projections = _get_all_projections(mesh, len(mesh))
     voxel_projections = _get_all_projections([voxel], 1)
     for i in range(3):

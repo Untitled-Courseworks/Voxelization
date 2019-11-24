@@ -73,7 +73,7 @@ def _GetVoxel(voxel_size: float, voxel: []):
 def _Model(model: [], debug_mode: bool):
     for verticies in model[0]:
         glBegin(GL_QUADS)
-        glColor3f(1, 0, 0)
+        glColor3ub(255, 0, 0)
         for surface in model[2]:
             for vertex in surface:
                 glVertex3fv(verticies[vertex])
@@ -83,7 +83,7 @@ def _Model(model: [], debug_mode: bool):
             glBegin(GL_LINES)  # Отображение границ
             for edge in model[1]:
                 for vertex in edge:
-                    glColor3f(1, 1, 0)
+                    glColor3ub(255, 255, 0)
                     glVertex3fv(verticies[vertex])
             glEnd()
 
@@ -95,7 +95,7 @@ def _ModelCentering(voxels_coords: [], extreme_coordinates: (), voxel_size: floa
     """
     dif_x = extreme_coordinates[1][0] - extreme_coordinates[0][0]
     dif_y = extreme_coordinates[1][1] - extreme_coordinates[0][1]
-    dif_z = extreme_coordinates[1][2] - extreme_coordinates[0][2]
+    dif_z = extreme_coordinates[1][2] - extreme_coordinates[0][2] + voxel_size
 
     for voxel_coords in voxels_coords:
         voxel_coords[0] = voxel_coords[0] - extreme_coordinates[0][0] - (dif_x / 2)

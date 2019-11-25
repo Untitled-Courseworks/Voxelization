@@ -10,7 +10,8 @@ from OpenGL.GLU import *
 Импортировать метод ShowModel - Принимает 4 аргумента: 
             1 - массив с координатама (x, y, z) вокселей
             2 - размер вокселя
-            3 - крайние координаты объекта в виде ->  ((Xmin, Ymin, Zmin), (Xmax, Ymax, Zmax))
+            3 - крайние координаты объекта в виде (Желательно в классе "Tuple", для отлова непредвиденных изменений) 
+                                                                            ->  ((Xmin, Ymin, Zmin), (Xmax, Ymax, Zmax))
             4 - debug_mod (True/False)
 ____________________________________________________________
 Приоритеты в планах:
@@ -20,24 +21,44 @@ ____________________________________________________________
 '''
 
 
-def _GetModel(voxel_size: float, voxels_coords: []):
+def _GetModel(voxel_size: float, voxels_coords: [], debug_mode: bool):
     model = (
         [],  # Вершины
-        (  # Грани
-            (0, 1),
-            (0, 3),
-            (0, 4),
-            (2, 1),
-            (2, 3),
-            (2, 6),
-            (7, 3),
-            (7, 4),
-            (7, 6),
-            (5, 1),
-            (5, 4),
-            (5, 6)
+        (  # Поверхности для debug_mode
+            (0, 1, 2, 3),
+            (4, 5, 6, 7),
+            (8, 9, 10, 11),
+            (12, 13, 14, 15),
+            (16, 17, 18, 19),
+            (20, 21, 22, 23)
         ),
-        (  # Поверхности
+        (  # Ребра для debug_mode
+            (10, 30, 26, 9),  # Верх
+            (26, 25, 8, 9),
+            (25, 29, 11, 8),
+            (29, 30, 10, 11),
+            (31, 27, 13, 14),  # Низ
+            (27, 13, 12, 24),
+            (24, 12, 15, 28),
+            (14, 15, 28, 31),
+            (31, 30, 6, 7),  # Перед
+            (30, 29, 5, 6),
+            (29, 28, 4, 5),
+            (7, 4, 28, 31),
+            (27, 26, 2, 3),  # Зад
+            (26, 25, 1, 2),
+            (1, 0, 24, 25),
+            (3, 0, 24, 27),
+            (27, 26, 16, 17),  # Лево
+            (26, 30, 19, 16),
+            (19, 30, 31, 18),
+            (17, 18, 31, 27),
+            (28, 29, 22, 23),  # Право
+            (29, 25, 21, 22),
+            (25, 21, 20, 24),
+            (24, 28, 23, 20)
+        ),
+        (  # Поверхности для нормального вокселя
             (0, 1, 2, 3),
             (3, 2, 6, 7),
             (7, 6, 5, 4),
@@ -48,42 +69,118 @@ def _GetModel(voxel_size: float, voxels_coords: []):
     )
 
     for voxel_coords in voxels_coords:
-        model[0].append(_GetVoxel(voxel_size, voxel_coords))
+        if debug_mode:
+            model[0].append(_GetDebugVoxel(voxel_size, voxel_coords))
+        else:
+            model[0].append(_GetVoxel(voxel_size, voxel_coords))
 
     return model
 
 
-def _GetVoxel(voxel_size: float, voxel: []):
-    x = voxel[0] / voxel_size / 5
-    y = voxel[1] / voxel_size / 5
-    z = voxel[2] / voxel_size / 5
+def _GetVoxel(voxel_size: float, voxel_coord: []):
+    x = voxel_coord[0] / voxel_size / 5
+    y = voxel_coord[1] / voxel_size / 5
+    z = voxel_coord[2] / voxel_size / 5
+    half_side = 0.2 / 2
 
     return (
-        (x + 0.1, y - 0.1, z - 0.1),  # правый низ зад
-        (x + 0.1, y + 0.1, z - 0.1),  # правый верх зад
-        (x - 0.1, y + 0.1, z - 0.1),  # левый верх зад
-        (x - 0.1, y - 0.1, z - 0.1),  # левый низ зад
-        (x + 0.1, y - 0.1, z + 0.1),  # правый низ перед
-        (x + 0.1, y + 0.1, z + 0.1),  # правый верх перед
-        (x - 0.1, y + 0.1, z + 0.1),  # левый верх перед
-        (x - 0.1, y - 0.1, z + 0.1)  # левый низ перед
+        (x + half_side, y - half_side, z - half_side),  # правый низ зад
+        (x + half_side, y + half_side, z - half_side),  # правый верх зад
+        (x - half_side, y + half_side, z - half_side),  # левый верх зад
+        (x - half_side, y - half_side, z - half_side),  # левый низ зад
+        (x + half_side, y - half_side, z + half_side),  # правый низ перед
+        (x + half_side, y + half_side, z + half_side),  # правый верх перед
+        (x - half_side, y + half_side, z + half_side),  # левый верх перед
+        (x - half_side, y - half_side, z + half_side)  # левый низ перед
+    )
+
+
+def _GetDebugVoxel(voxel_size: float, voxel_coord: []):
+    x = voxel_coord[0] / voxel_size / 5
+    y = voxel_coord[1] / voxel_size / 5
+    z = voxel_coord[2] / voxel_size / 5
+    border = 0.01  # Ширина ребра
+    half_side = 0.2 / 2
+
+    return (
+        # --Внутренние--
+        # зад (0 - 3)
+        (x + half_side - border, y - half_side + border, z - half_side),  # правый низ зад
+        (x + half_side - border, y + half_side - border, z - half_side),  # правый верх зад
+        (x - half_side + border, y + half_side - border, z - half_side),  # левый верх зад
+        (x - half_side + border, y - half_side + border, z - half_side),  # левый низ зад
+
+        # Перед (4 - 7)
+        (x + half_side - border, y - half_side + border, z + half_side),  # правый низ перед
+        (x + half_side - border, y + half_side - border, z + half_side),  # правый верх перед
+        (x - half_side + border, y + half_side - border, z + half_side),  # левый верх перед
+        (x - half_side + border, y - half_side + border, z + half_side),  # левый низ перед
+
+        # Верх (8 - 11)
+        (x + half_side - border, y + half_side, z - half_side + border),  # правый верх зад
+        (x - half_side + border, y + half_side, z - half_side + border),  # левый верх зад
+        (x - half_side + border, y + half_side, z + half_side - border),  # левый верх перед
+        (x + half_side - border, y + half_side, z + half_side - border),  # правый верх перед
+
+        # Низ (12 - 15)
+        (x + half_side - border, y - half_side, z - half_side + border),  # правый низ зад
+        (x - half_side + border, y - half_side, z - half_side + border),  # левый низ зад
+        (x - half_side + border, y - half_side, z + half_side - border),  # левый низ перед
+        (x + half_side - border, y - half_side, z + half_side - border),  # правый низ перед
+
+        # Лево (16 - 19)
+        (x - half_side, y + half_side - border, z - half_side + border),  # левый верх зад
+        (x - half_side, y - half_side + border, z - half_side + border),  # левый низ зад
+        (x - half_side, y - half_side + border, z + half_side - border),  # левый низ перед
+        (x - half_side, y + half_side - border, z + half_side - border),  # левый верх перед
+
+        # Право (20 - 23)
+        (x + half_side, y - half_side + border, z - half_side + border),  # правый низ зад
+        (x + half_side, y + half_side - border, z - half_side + border),  # правый верх зад
+        (x + half_side, y + half_side - border, z + half_side - border),  # правый верх перед
+        (x + half_side, y - half_side + border, z + half_side - border),  # правый низ перед
+
+        # ------------------------------------------------------------------------------------
+
+        # --Внешние-- (24 - 31)
+        (x + half_side, y - half_side, z - half_side),  # правый низ зад
+        (x + half_side, y + half_side, z - half_side),  # правый верх зад
+        (x - half_side, y + half_side, z - half_side),  # левый верх зад
+        (x - half_side, y - half_side, z - half_side),  # левый низ зад
+        (x + half_side, y - half_side, z + half_side),  # правый низ перед
+        (x + half_side, y + half_side, z + half_side),  # правый верх перед
+        (x - half_side, y + half_side, z + half_side),  # левый верх перед
+        (x - half_side, y - half_side, z + half_side),  # левый низ перед
     )
 
 
 def _Model(model: [], debug_mode: bool):
-    for verticies in model[0]:
-        glBegin(GL_QUADS)
-        glColor3ub(255, 0, 0)
-        for surface in model[2]:
-            for vertex in surface:
-                glVertex3fv(verticies[vertex])
-        glEnd()
 
-        if debug_mode:
-            glBegin(GL_LINES)  # Отображение границ
-            for edge in model[1]:
-                for vertex in edge:
-                    glColor3ub(255, 255, 0)
+    if debug_mode:
+        # Отрисовка маленьких граней
+        for verticies in model[0]:
+            glBegin(GL_QUADS)
+            glColor3ub(27, 171, 104)  # Выбор цвета
+            for surface in model[1]:
+                for vertex in surface:
+                    glVertex3fv(verticies[vertex])
+            glEnd()
+
+        # Отрисовка ребер
+        for verticies in model[0]:
+            glBegin(GL_QUADS)
+            glColor3ub(0, 0, 0)  # Выбор цвета
+            for surface in model[2]:
+                for vertex in surface:
+                    glVertex3fv(verticies[vertex])
+            glEnd()
+    else:
+        # Отрисовка больших граней
+        for verticies in model[0]:
+            glBegin(GL_QUADS)
+            glColor3ub(27, 171, 104)  # Выбор цвета
+            for surface in model[3]:
+                for vertex in surface:
                     glVertex3fv(verticies[vertex])
             glEnd()
 
@@ -107,23 +204,24 @@ def _ModelCentering(voxels_coords: [], extreme_coordinates: (), voxel_size: floa
 
 
 def ShowModel(voxels_coords: [], voxel_size: float, extreme_coordinates: (), debug_mode: bool):
-    """
-    :param extreme_coordinates:  в виде  ->  ((Xmin, Ymin, Zmin), (Xmax, Ymax, Zmax))
-    :return: ()
-    """
+
     perspective = _ModelCentering(voxels_coords, extreme_coordinates, voxel_size)
-    model = _GetModel(voxel_size, voxels_coords)
+
+    model = _GetModel(voxel_size, voxels_coords, debug_mode)
 
     pygame.init()
     display = (800, 600)  # Размер окна
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
-
     pygame.display.set_caption("Result")  # Название окна
 
+    glEnable(GL_DEPTH_TEST)  # Необходимо для корректного отображения без просветов
+    if debug_mode:
+        glClearColor(100 / 255, 100 / 255, 100 / 255, 1)  # Выбор цвета фона
+    else:
+        glClearColor(70 / 255, 70 / 255, 70 / 255, 1)  # Выбор цвета фона
+
     gluPerspective(45, (display[0] / display[1]), 0.1, perspective[1])
-
     glTranslatef(0, 0, -perspective[0])
-
     glRotatef(0, 0, 0, 0)
 
     x_move = 0

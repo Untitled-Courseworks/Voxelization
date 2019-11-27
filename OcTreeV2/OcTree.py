@@ -85,7 +85,7 @@ class Octree:
                 continue
             if location not in children:
                 children.append(location)
-                yield node.find_and_get_child(location)
+                yield node.get_child(location)
 
     @staticmethod
     def _get_all_voxels_vertex(voxel: [], size: float):  # Tested

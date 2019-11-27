@@ -4,8 +4,8 @@ from OcTreeV2.OcTree import Octree
 import math
 
 
-def get_simple_node(size=4):
-    return Node(None, size, [0, 0, 0])
+def get_simple_node(size=4.0, position=[0.0, 0.0, 0.0]):
+    return Node(None, size, position)
 
 
 class TestsAddChildren(unittest.TestCase):
@@ -25,7 +25,7 @@ class TestsAddObjects(unittest.TestCase):
         self.assertEqual(10, len(node.Objects))
 
 
-class TestsDectribute(unittest.TestCase):
+class TestsDectributeForMeshes(unittest.TestCase):
 
     def test_add_one_object_on_bounding(self):
         node = get_simple_node()
@@ -57,6 +57,76 @@ class TestsDectribute(unittest.TestCase):
         node.distribute()
         self.assertEqual(1, len(node.Objects))
         self.assertEqual(1, len(node.Children[0].Objects))
+
+
+class TestDistributeForVoxels(unittest.TestCase):
+
+    def test_distribute_one_voxel(self):
+        node = get_simple_node(4)
+        node.add_objects([[0, 0, 0]])
+        node.distribute(True, 4)
+        self.assertEqual(1, len(node))
+
+    def test_with_8_voxels(self):
+        node = get_simple_node()
+        node.add_objects(Octree.get_all_voxels([0, 0, 0], 2, 4))
+        node.distribute(True, 2)
+        self.assertEqual(8, len(node))
+
+    def test_with_27_voxels(self):
+        node = get_simple_node(3)
+        node.add_objects(Octree.get_all_voxels([0, 0, 0], 1, 3))
+        node.distribute(True, 1)
+        self.assertEqual(TestsFillOctree.get_count_voxels_on_upper_node(1, 3), len(node))
+        for i in range(8):
+            child = node.Children[i]
+            self.assertEqual(1, len(child))
+
+    def test_with_64_voxels(self):
+        node = get_simple_node()
+        node.add_objects(Octree.get_all_voxels([0, 0, 0], 1, 4))
+        node.distribute(True, 1)
+        self.assertEqual(TestsFillOctree.get_count_voxels_on_upper_node(1, 4), len(node), "start node")
+        te = TestsFillOctree.get_count_voxels_on_upper_node(1, 4, )
+        for i in range(8):
+            child = node.Children[i]
+            self.assertEqual(1, len(child))
+
+    def test_with_125_voxels(self):
+        node = get_simple_node(5)
+        node.add_objects(Octree.get_all_voxels([0, 0, 0], 1, 5))
+        node.distribute(True, 1)
+        self.assertEqual(TestsFillOctree.get_count_voxels_on_upper_node(1, 5), len(node))
+        for i in range(8):
+            child = node.Children[i]
+            self.assertEqual(8, len(child))
+
+    def test_bounding_boxes_on_start_coordinates_with_64_voxels(self):
+        node = get_simple_node(4, [-2, -2, -2])
+        node.add_objects([i for i in Octree.get_all_voxels([-2, -2, -2], 1, 4)])
+        node.distribute(True, 1)
+        self.assertEqual(TestsFillOctree.get_count_voxels_on_upper_node(1, 4), len(node), "start node")
+        for i in range(8):
+            child = node.Children[i]
+            self.assertEqual(1, len(child), "child num: " + str(i))
+
+    def test_bounding_boxes_on_start_coordinates_with_125_voxels(self):
+        node = get_simple_node(5, [-2.5, -2.5, -2.5])
+        node.add_objects(Octree.get_all_voxels([-2.5, -2.5, -2.5], 1, 5))
+        node.distribute(True, 1)
+        self.assertEqual(TestsFillOctree.get_count_voxels_on_upper_node(1, 5), len(node))
+        for i in range(8):
+            child = node.Children[i]
+            self.assertEqual(8, len(child), "child num: " + str(i))
+
+    def test_bounding_boxes_on_negative_side_with_8_voxels(self):
+        node = get_simple_node(4, [-4, -4, -4])
+        node.add_objects(Octree.get_all_voxels([-4, -4, -4], 2, 4))
+        node.distribute(True, 2)
+        self.assertEqual(8, len(node))
+        for i in range(8):
+            child = node.Children[i]
+            self.assertEqual(0, len(child), "child num: " + str(i))
 
 
 def get_octree(objects=[], size_voxel=1.0, is_voxel=True):
@@ -126,6 +196,14 @@ class TestsFillOctree(unittest.TestCase):
         count_voxels = self.get_count_voxels_on_upper_node(2, 4)
         self.assertEqual(voxels, tree.Start.Objects)
 
+    def test_with_27_voxels(self):
+        voxels = [i for i in Octree.get_all_voxels([0, 0, 0], 1, 3)]
+        tree = Octree(voxels, 1, [[0, 3], [0, 3], [0, 3]], True)
+        tree.fill_tree()
+        self.assertEqual(self.get_count_voxels_on_upper_node(1, 3), len(tree.Start.Objects))
+        for i in range(8):
+            self.assertEqual(1, len(tree.Start.Children[i]), str(i))
+
     def test_with_64_voxels(self):
         voxels = [i for i in Octree.get_all_voxels([0, 0, 0], 1, 4)]
         tree = get_octree(voxels, 1, True)
@@ -137,11 +215,14 @@ class TestsFillOctree(unittest.TestCase):
     def test_with_125_voxels(self):
         voxels =[i for i in Octree.get_all_voxels([0, 0, 0], 1, 5)]
         tree = Octree(voxels, 1, [[0, 5], [0, 5], [0, 5]], True)
-        #tree.fill_tree()
-        tree.Start.distribute(True, 1)
+        tree.fill_tree()
+        #tree.Start.distribute(True, 1)
         self.assertEqual(self.get_count_voxels_on_upper_node(1, 5), len(tree.Start.Objects))
         for child in range(8):
             self.assertEqual(self.get_count_voxels_on_upper_node(1, 2) - 1, len(tree.Start.Children[child].Objects), str(child))
+            for i in range(8):
+                ch = tree.Start.Children[child]
+                self.assertTrue(len(ch.Children[i]) == 1 or 0)
 
     def test_with_voxels_in_child(self):
         # TODO
@@ -161,7 +242,11 @@ class TestsFillOctree(unittest.TestCase):
         voxels = [i for i in Octree.get_all_voxels([0, 0, 0], 0.5, 4)]
         tree = get_octree(voxels, 0.5, True)
         tree._fill_tree(tree.Start)
-        self.assertEqual(19200, len(tree.Start.Objects))
+        self.assertEqual(self.get_count_voxels_on_upper_node(0.5, 4), len(tree.Start.Objects))
+        for child in range(8):
+            ch = tree.Start.Children[child]
+            self.assertEqual(self.get_count_voxels_on_upper_node(0.5, 1.5), len(ch), str(child))
+
 
     def test_temp(self):
         voxels = [[0, 0, 3], [1, 0, 3], [0, 0, 4], [1, 0, 4]]

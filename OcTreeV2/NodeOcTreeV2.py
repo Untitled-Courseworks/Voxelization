@@ -32,9 +32,9 @@ class Node:
         """
         res = []
         for area in range(3):
-            if abs(self.BoundingBox[area] > abs(point[area])):
+            if (self.BoundingBox[area]) > (point[area]):
                 res.append(-1)
-            elif abs(self.BoundingBox[area] < abs(point[area])):
+            elif (self.BoundingBox[area]) < (point[area]):
                 res.append(1)
             else:
                 res.append(0)
@@ -81,31 +81,25 @@ class Node:
         elif location == [1, 1, 1]:
             return 7
 
-    def distribute(self, is_voxels=False, size_voxels=0):
+    def distribute(self, is_voxels=True, size_voxels=0):
         """
         Разбивает объекты в вершине между вершиной и детьми
         :return:
         """
         node_objects = []
-        for ob in self.Objects:
-            object_vertex = ob
-            if is_voxels:
-                # TODO проверять только две диагоналные точки
-                object_vertex = self._get_all_voxels_vertex(ob, size_voxels)
-            location = self.get_location_point(object_vertex[0])
-            if 0 in location:
-                node_objects.append(ob)
+        for objects in self.Objects:
+            first_diagonal_vertex = objects
+            second_diagonal_vertex = [i + size_voxels for i in objects]
+            if self._compare_diagonal_vertexes(first_diagonal_vertex, second_diagonal_vertex):
+                node_objects.append(objects)
                 continue
-            is_added = False
-            for i in object_vertex:
-                temp_location = self.get_location_point(i)
-                if 0 in temp_location or temp_location != location:
-                    node_objects.append(ob)
-                    is_added = True
-                    break
-            if not is_added:
-                self.find_and_get_child(location).Objects.append(ob)
+            self.get_child(self.get_location_point(first_diagonal_vertex)).Objects.append(objects)
         self.Objects = node_objects
+
+    def _compare_diagonal_vertexes(self, first_vertex, second_vertex) -> bool:
+        location_first_vertex = self.get_location_point(first_vertex)
+        location_second_vertex = self.get_location_point(second_vertex)
+        return location_first_vertex != location_second_vertex or (0 in location_first_vertex in location_second_vertex)
 
     @staticmethod
     def _get_all_voxels_vertex(voxel: [], size: float):  # Tested
@@ -123,3 +117,6 @@ class Node:
                 for z in range(2):
                     res.append([x * size + voxel[0], y * size + voxel[1], z * size + voxel[2]])
         return res
+
+    def __len__(self):
+        return len(self.Objects)

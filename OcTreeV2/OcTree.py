@@ -104,13 +104,13 @@ class Octree:
 
     @staticmethod
     def get_all_voxels(start_point: [], size_voxel: float, max_size: float):
-        x = 0
-        while x < max_size:
+        z = 0
+        while z < max_size:
             y = 0
             while y < max_size:
-                z = 0
-                while z < max_size:
+                x = 0
+                while x < max_size:
                     yield [start_point[0] + x, start_point[1] + y, start_point[2] + z]
-                    z += size_voxel
+                    x += size_voxel
                 y += size_voxel
-            x += size_voxel
+            z += size_voxel

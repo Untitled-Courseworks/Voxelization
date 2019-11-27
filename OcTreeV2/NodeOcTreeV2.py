@@ -54,38 +54,32 @@ class Node:
         self.Children = [Node(self, div_size, get_coordinate([x, y, z], div_size))
                          for x in range(2) for y in range(2) for z in range(2)]
 
-    def find_and_get_child(self, pos_point: []):  # Tested
+    def get_child(self, pos_point: []):  # Tested
         """
-        Ищет по позиционным координатам потомка
         :param pos_point: позиционная координата
         :return:
         """
-        # TODO Сделать из этой херни конфетку
         if 0 in pos_point:
             raise Exception("pos_point shouldn't contains 0")
+        return self.Children[self._get_num_children_from_location(pos_point)]
 
-        if pos_point[0] == 1:
-            if pos_point[1] == 1:
-                if pos_point[2] == 1:
-                    return self.Children[7]
-                else:
-                    return self.Children[6]
-            else:
-                if pos_point[2] == 1:
-                    return self.Children[5]
-                else:
-                    return self.Children[4]
-        else:
-            if pos_point[1] == 1:
-                if pos_point[2] == 1:
-                    return self.Children[3]
-                else:
-                    return self.Children[2]
-            else:
-                if pos_point[2] == 1:
-                    return self.Children[1]
-                else:
-                    return self.Children[0]
+    def _get_num_children_from_location(self, location: []):
+        if location == [-1, -1, -1]:
+            return 0
+        elif location == [-1, -1, 1]:
+            return 1
+        elif location == [-1, 1, -1]:
+            return 2
+        elif location == [-1, 1, 1]:
+            return 3
+        elif location == [1, -1, -1]:
+            return 4
+        elif location == [1, -1, 1]:
+            return 5
+        elif location == [1, 1, -1]:
+            return 6
+        elif location == [1, 1, 1]:
+            return 7
 
     def distribute(self, is_voxels=False, size_voxels=0):
         """
@@ -96,6 +90,7 @@ class Node:
         for ob in self.Objects:
             object_vertex = ob
             if is_voxels:
+                # TODO проверять только две диагоналные точки
                 object_vertex = self._get_all_voxels_vertex(ob, size_voxels)
             location = self.get_location_point(object_vertex[0])
             if 0 in location:

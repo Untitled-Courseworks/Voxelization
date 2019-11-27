@@ -27,7 +27,7 @@ class Octree:
         :param node: вершина
         :return:
         """
-        if node.Size <= self.Size_voxel or str(type(node.Objects)) == "<class 'generator'>" or len(node.Objects) <= 1:
+        if node.Size <= self.Size_voxel or (str(type(node.Objects)) != "<class 'generator'>" and len(node.Objects) <= 1):
             return
         if len(node.Children) == 0:
             node.add_children()

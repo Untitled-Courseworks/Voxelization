@@ -10,7 +10,7 @@ class Node:
         self.Size = size
         self.Coordinate = coordinate
         div_size = self.Size / 2
-        self.BoundingBox = [self.Coordinate[2] + div_size, self.Coordinate[1] + div_size, self.Coordinate[0] + div_size]
+        self.BoundingBox = [i + div_size for i in self.Coordinate]
         self.Objects = []
         self.Children = []
 
@@ -45,14 +45,25 @@ class Node:
         Добавить потомков в вершину
         :return:
         """
+        def _pow(x, y):
+            if y == 0:
+                return x
+            return x * x
 
-        def get_coordinate(mask: [], div_size):
-            mask = [m * div_size for m in mask]
-            return [self.Coordinate[i] + mask[i] for i in range(3)]
+        #[self.BoundingBox[0] + _pow(-1, x) * div_size[0],
+         #self.BoundingBox[1] + _pow(-1, y) * div_size[1],
+         #self.BoundingBox[2] + _pow(-1, z) * div_size[2]]
 
+        #div_size = [(abs(self.BoundingBox[i]) - abs(self.Coordinate[i])) / 2 for i in range(3)]
         div_size = self.Size / 2
-        self.Children = [Node(self, div_size, get_coordinate([x, y, z], div_size))
-                         for x in range(2) for y in range(2) for z in range(2)]
+        for x in range(2):
+            for y in range(2):
+                for z in range(2):
+                    child = Node(self, self.Size / 2, [self.Coordinate[0] + x * div_size,
+                                                       self.Coordinate[1] + y * div_size,
+                                                       self.Coordinate[2] + z * div_size])
+                    self.Children.append(child)
+
 
     def get_child(self, pos_point: []):  # Tested
         """

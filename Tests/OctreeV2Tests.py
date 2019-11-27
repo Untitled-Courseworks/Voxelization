@@ -15,6 +15,19 @@ class TestsAddChildren(unittest.TestCase):
         node.add_children()
         self.assertEqual(8, len(node.Children))
 
+    def test_2(self):
+        node = get_simple_node(4)
+        node.add_children()
+        self.assertEqual([2, 2, 2], node.BoundingBox)
+
+        self.assertEqual([1, 1, 1], node.Children[0].BoundingBox, "node num: 0")
+        self.assertEqual([1, 1, 3], node.Children[1].BoundingBox, "node num: 1")
+        self.assertEqual([1, 3, 1], node.Children[2].BoundingBox, "node num: 2")
+        self.assertEqual([1, 3, 3], node.Children[3].BoundingBox, "node num: 3")
+        self.assertEqual([3, 1, 1], node.Children[4].BoundingBox, "node num: 4")
+        self.assertEqual([3, 1, 3], node.Children[5].BoundingBox, "node num: 5")
+        self.assertEqual([3, 3, 1], node.Children[6].BoundingBox, "node num: 6")
+        self.assertEqual([3, 3, 3], node.Children[7].BoundingBox, "node num: 7")
 
 class TestsAddObjects(unittest.TestCase):
 
@@ -173,7 +186,6 @@ class TestsGetChildrenForChecked(unittest.TestCase):
 
 
 class TestsFillOctree(unittest.TestCase):
-
     @staticmethod
     def get_count_voxels_on_upper_node(size_voxel: float, max_size: float):
         length = math.ceil(max_size / size_voxel)
@@ -219,10 +231,10 @@ class TestsFillOctree(unittest.TestCase):
         #tree.Start.distribute(True, 1)
         self.assertEqual(self.get_count_voxels_on_upper_node(1, 5), len(tree.Start.Objects))
         for child in range(8):
-            self.assertEqual(self.get_count_voxels_on_upper_node(1, 2) - 1, len(tree.Start.Children[child].Objects), str(child))
+            self.assertEqual(7, len(tree.Start.Children[child]), str(child))
             for i in range(8):
                 ch = tree.Start.Children[child]
-                self.assertTrue(len(ch.Children[i]) == 1 or 0)
+                self.assertTrue(len(ch.Children[i]) == 1 or len(ch.Children[i]) == 0)
 
     def test_with_voxels_in_child(self):
         # TODO
@@ -245,15 +257,7 @@ class TestsFillOctree(unittest.TestCase):
         self.assertEqual(self.get_count_voxels_on_upper_node(0.5, 4), len(tree.Start.Objects))
         for child in range(8):
             ch = tree.Start.Children[child]
-            self.assertEqual(self.get_count_voxels_on_upper_node(0.5, 1.5), len(ch), str(child))
-
-
-    def test_temp(self):
-        voxels = [[0, 0, 3], [1, 0, 3], [0, 0, 4], [1, 0, 4]]
-        tree = Octree(voxels, 1, [[0, 2.5], [0, 2.5], [2.5, 5]], True)
-        tree.fill_tree()
-        #temp = self.get_count_voxels_on_upper_node(1, 2.5)
-        self.assertEqual(self.get_count_voxels_on_upper_node(1, 2.5), len(tree.Start.Objects))
+            self.assertEqual(26, len(ch), str(child))
 
 
 class TestsDistribute(unittest.TestCase):

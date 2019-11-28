@@ -19,7 +19,7 @@ ____________________________________________________________
 '''
 
 
-def _GetModel(voxel_size: float, voxels_coords: [], debug_mode: bool):
+def _GetModel(voxel_size: float, voxels_coords: [], debug_mode: bool, extreme_coordinates: ()):
     model = (
         [],  # Вершины
         (  # Поверхности для debug_mode
@@ -63,10 +63,18 @@ def _GetModel(voxel_size: float, voxels_coords: [], debug_mode: bool):
             (4, 5, 1, 0),
             (1, 5, 6, 2),
             (4, 0, 3, 7)
-        )
+        ),
+        []  # Данные об отдаленности камеры и максимальной прорисовки
     )
 
+    dif_x = extreme_coordinates[1][0] - extreme_coordinates[0][0] + voxel_size
+    dif_y = extreme_coordinates[1][1] - extreme_coordinates[0][1] + voxel_size
+    dif_z = extreme_coordinates[1][2] - extreme_coordinates[0][2] + voxel_size
+
+    model[4].append(_GetDistanceData(dif_x, dif_y, dif_z, voxel_size))
+
     for voxel_coords in voxels_coords:
+        _VoxelCentering(voxel_coords, extreme_coordinates, voxel_size, dif_x, dif_y, dif_z)
         if debug_mode:
             model[0].append(_GetDebugVoxel(voxel_size, voxel_coords))
         else:
@@ -183,29 +191,20 @@ def _Model(model: [], debug_mode: bool):
             glEnd()
 
 
-def _ModelCentering(voxels_coords: [], extreme_coordinates: (), voxel_size: float):
-    """
-    :param extreme_coordinates:  в виде  ->  ((Xmin, Ymin, Zmin), (Xmax, Ymax, Zmax))
-    :return: ()
-    """
-    dif_x = extreme_coordinates[1][0] - extreme_coordinates[0][0] + voxel_size
-    dif_y = extreme_coordinates[1][1] - extreme_coordinates[0][1] + voxel_size
-    dif_z = extreme_coordinates[1][2] - extreme_coordinates[0][2] + voxel_size
+def _VoxelCentering(voxel_coords: [], extreme_coordinates: (), voxel_size: float,
+                    dif_x: float, dif_y: float, dif_z: float):
+    voxel_coords[0] = voxel_coords[0] - extreme_coordinates[0][0] + voxel_size / 2 - (dif_x / 2)
+    voxel_coords[1] = voxel_coords[1] - extreme_coordinates[0][1] + voxel_size / 2 - (dif_y / 2)
+    voxel_coords[2] = voxel_coords[2] - extreme_coordinates[0][2] + voxel_size / 2 - (dif_z / 2)
 
-    for voxel_coords in voxels_coords:
-        voxel_coords[0] = voxel_coords[0] - extreme_coordinates[0][0] + voxel_size / 2 - (dif_x / 2)
-        voxel_coords[1] = voxel_coords[1] - extreme_coordinates[0][1] + voxel_size / 2 - (dif_y / 2)
-        voxel_coords[2] = voxel_coords[2] - extreme_coordinates[0][2] + voxel_size / 2 - (dif_z / 2)
 
+def _GetDistanceData(dif_x: float, dif_y: float, dif_z: float, voxel_size: float):
     max_half = max(dif_x, dif_y, dif_z) / 2 / voxel_size
     return (max_half * 1.3, max_half * 10)
 
 
 def ShowModel(voxels_coords: [], voxel_size: float, extreme_coordinates: (), debug_mode: bool):
-
-    perspective = _ModelCentering(voxels_coords, extreme_coordinates, voxel_size)
-
-    model = _GetModel(voxel_size, voxels_coords, debug_mode)
+    model = _GetModel(voxel_size, voxels_coords, debug_mode, extreme_coordinates)
 
     pygame.init()
     display = (800, 600)  # Размер окна
@@ -218,8 +217,8 @@ def ShowModel(voxels_coords: [], voxel_size: float, extreme_coordinates: (), deb
     else:
         glClearColor(70 / 255, 70 / 255, 70 / 255, 1)  # Выбор цвета фона
 
-    gluPerspective(45, (display[0] / display[1]), 0.1, perspective[1])
-    glTranslatef(0, 0, -perspective[0])
+    gluPerspective(45, (display[0] / display[1]), 0.1, model[4][0][1])
+    glTranslatef(0, 0, -model[4][0][0])
     glRotatef(0, 0, 0, 0)
 
     x_move = 0

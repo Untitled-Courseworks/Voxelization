@@ -113,7 +113,7 @@ class Node:
         return location_first_vertex != location_second_vertex or (0 in location_first_vertex in location_second_vertex)
 
     @staticmethod
-    def _get_all_voxels_vertex(voxel: [], size: float):  # Tested
+    def get_all_voxels_vertex(voxel: [], size: float):  # Tested
         """
         Генерирует все вершины вокселя
         :param voxel: воксель

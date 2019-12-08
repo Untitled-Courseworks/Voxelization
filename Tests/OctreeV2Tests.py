@@ -239,10 +239,10 @@ class TestsFillOctree(unittest.TestCase):
     def test_with_voxels_in_child(self):
         # TODO
         #  Работает правильно, но лень настраивать тест
-        voxels = Node._get_all_voxels_vertex([0, 0, 0], 1)
+        voxels = Node.get_all_voxels_vertex([0, 0, 0], 1)
         v = []
         for i in voxels:
-            temp = Node._get_all_voxels_vertex(i, 0.5)
+            temp = Node.get_all_voxels_vertex(i, 0.5)
             for t in temp:
                 if 2 not in t:
                     v.append(t)
@@ -282,7 +282,7 @@ class TestsDistribute(unittest.TestCase):
         self.assertEqual(node.Children[3].Objects, voxel)
 
     def test_with_8_voxels(self):
-        voxels = Node._get_all_voxels_vertex([0, 0, 0], 3)
+        voxels = Node.get_all_voxels_vertex([0, 0, 0], 3)
         node = get_simple_node()
         node.add_objects(voxels)
         node.distribute(True, 1)
@@ -291,15 +291,15 @@ class TestsDistribute(unittest.TestCase):
         self.assertEqual(0, len(node.Objects))
 
     def test_distribute_child(self):
-        voxels = Node._get_all_voxels_vertex([0, 0, 0], 2)
+        voxels = Node.get_all_voxels_vertex([0, 0, 0], 2)
         v = []
         for i in voxels:
-            temp = Node._get_all_voxels_vertex(i, 1)
+            temp = Node.get_all_voxels_vertex(i, 1)
             for t in temp:
                 v.append(t)
         voxels = []
         for i in v:
-            temp = Node._get_all_voxels_vertex(i, 0.5)
+            temp = Node.get_all_voxels_vertex(i, 0.5)
             for t in temp:
                 voxels.append(t)
         node = get_simple_node(4)
@@ -321,7 +321,7 @@ class TestGetAllCrossing(unittest.TestCase):
         self.assertEqual(0, len(tree.Start.Objects))
 
     def test_with_8_voxels(self):
-        voxels = Node._get_all_voxels_vertex([0, 0, 0], 2)
+        voxels = Node.get_all_voxels_vertex([0, 0, 0], 2)
         tree = get_octree(voxels, 2)
         tree.fill_tree()
         mesh = [[0, 0, 0], [3, 1, 0], [2, 3, 0]]
@@ -337,10 +337,10 @@ class TestGetAllCrossing(unittest.TestCase):
         self.assertEqual(3, len(tree.Start.Objects))
 
     def test_with_64_voxels(self):
-        vo = Node._get_all_voxels_vertex([0, 0, 0], 2)
+        vo = Node.get_all_voxels_vertex([0, 0, 0], 2)
         voxels = []
         for i in vo:
-            temp = Node._get_all_voxels_vertex(i, 1)
+            temp = Node.get_all_voxels_vertex(i, 1)
             for t in temp:
                 voxels.append(t)
         tree = get_octree(voxels, 1)

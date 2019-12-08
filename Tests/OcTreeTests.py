@@ -90,20 +90,20 @@ class TestsGetAllVoxelsVertex(unittest.TestCase):
 
     def test_simple(self):
         node = get_empty_node_with_empty_children()
-        res = [i for i in node._get_all_voxels_vertex([0, 0, 0], 1)]
+        res = [i for i in node.get_all_voxels_vertex([0, 0, 0], 1)]
         answ = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
         self.assertEqual(res, answ)
 
     def test_voxel_on_negative_side(self):
         node = get_empty_node_with_empty_children()
-        res = [i for i in node._get_all_voxels_vertex([-4, -4, -4], 2)]
+        res = [i for i in node.get_all_voxels_vertex([-4, -4, -4], 2)]
         answ = [[-4, -4, -4], [-4, -4, -2], [-4, -2, -4], [-4, -2, -2], [-2, -4, -4], [-2, -4, -2], [-2, -2, -4],
                 [-2, -2, -2]]
         self.assertEqual(res, answ)
 
     def test_voxel_on_positive_side(self):
         node = get_empty_node_with_empty_children()
-        res = [i for i in node._get_all_voxels_vertex([1, 1, 1], 1)]
+        res = [i for i in node.get_all_voxels_vertex([1, 1, 1], 1)]
         answ = [[1, 1, 1], [1, 1, 2], [1, 2, 1], [1, 2, 2], [2, 1, 1], [2, 1, 2], [2, 2, 1], [2, 2, 2]]
         self.assertEqual(res, answ)
 

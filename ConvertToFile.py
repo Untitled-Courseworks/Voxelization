@@ -1,9 +1,9 @@
 from OcTreeV2.NodeOcTreeV2 import Node
 
 
-def convert(voxels: [], size_voxel: float):
+def convert(file_name, voxels: [], size_voxel: float):
     points = get_all_points(voxels, size_voxel)
-    with open("model.PCD", "w") as file:
+    with open(file_name, "w") as file:
         write_header(file, len(points))
         for point in points:
             file.write(get_str_from_point(point))

@@ -238,11 +238,28 @@ def ShowModel(voxels_coords: [], voxel_size: float, extreme_coordinates: (), deb
     degrees_axis_x = 0  # Вращение верх/низ
     # degrees_axis_z = 0
 
-    while True:
+    update = True
+
+    while update:
+        # Изменение оси Y (Вращение влево/вправо)
+        degrees_axis_y += x_rotate * step * 10
+        radians_axis_y += x_rotate * step * 10 / 180 * math.pi
+
+        # Изменение оси X (Вращение вверх/вниз)
+        degrees_axis_x += y_rotate * step * 10
+        radians_axis_x += y_rotate * step * 10 / 180 * math.pi
+
+        glRotatef(step, y_rotate, x_rotate, z_rotate)  # Изменение ориентации
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        _Model(model, debug_mode)
+        pygame.display.flip()
+        pygame.time.wait(10)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                update = False
                 pygame.quit()
-                quit()
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -264,9 +281,9 @@ def ShowModel(voxels_coords: [], voxel_size: float, extreme_coordinates: (), deb
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     x_rotate = 0
                     step = 0
-                if event.key == pygame.K_DOWN or event.key == pygame.K_UP:
-                    y_rotate = 0
-                    step = 0
+                # if event.key == pygame.K_DOWN or event.key == pygame.K_UP:
+                #     y_rotate = 0
+                #     step = 0
 
             # Вращение вправо/влево
             z_move = -math.cos(radians_axis_y) * 0.1
@@ -282,18 +299,3 @@ def ShowModel(voxels_coords: [], voxel_size: float, extreme_coordinates: (), deb
                     glTranslatef(x_move, y_move, z_move)
                 if event.button == 5:
                     glTranslatef(-x_move, -y_move, -z_move)
-
-        # Изменение оси Y (Вращение влево/вправо)
-        degrees_axis_y += x_rotate * step * 10
-        radians_axis_y += x_rotate * step * 10 / 180 * math.pi
-
-        # Изменение оси X (Вращение вверх/вниз)
-        degrees_axis_x += y_rotate * step * 10
-        radians_axis_x += y_rotate * step * 10 / 180 * math.pi
-
-        glRotatef(step, y_rotate, x_rotate, z_rotate)  # Изменение ориентации
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        _Model(model, debug_mode)
-        pygame.display.flip()
-        pygame.time.wait(10)
